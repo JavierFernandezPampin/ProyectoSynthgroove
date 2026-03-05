@@ -22,11 +22,13 @@ canal de comunicación más directo y organizado con su público.
 La aplicación contará con 4 secciones principales:
 
 Inicio:
+
     –Imagen corporativa.
     –Novedades destacadas.
     –Enlaces a redes sociales.
 
 Descripcion del colectivo + artistas:
+
     -Descripcion colectivo
     –Nombre artístico.
     –Biografía.
