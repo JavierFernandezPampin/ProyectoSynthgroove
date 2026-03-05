@@ -35,6 +35,7 @@ Descripcion del colectivo + artistas:
     –Imagen o fotografía.
     
 Musica:
+
     Releases:
         -Enlace a la pagina en la que se almacene el/los release, el cual contiene imagen y la opcion de reproducirlo en el mismo navegador
 
