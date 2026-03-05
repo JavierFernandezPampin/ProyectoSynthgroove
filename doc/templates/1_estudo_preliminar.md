@@ -19,43 +19,7 @@ canal de comunicación más directo y organizado con su público.
 
 ### Funcionalidades do proxecto.
 
-La aplicación contará con 4 secciones principales:
-
-Inicio:
-
-    –Imagen corporativa.
-    –Novedades destacadas.
-    –Enlaces a redes sociales.
-
-Descripcion del colectivo + artistas:
-
-    -Descripcion colectivo
-    –Nombre artístico.
-    –Biografía.
-    –Imagen o fotografía.
-    
-Musica:
-
-    Releases:
-        -Enlace a la pagina en la que se almacene el/los release, el cual contiene imagen y la opcion de reproducirlo en el mismo navegador
-
-    Podcast:
-        -Enlace que mostrara el/los podcast con imagen el cual se podrá reproducir en el mismo navegador
-
-    Próximos eventos:
-        –Nombre del evento.
-        –Fecha.
-        –Ubicación
-        –Cartel.
-        –Precio de la entrada.
-        –Enlace de compra.
-
-
-Merchandising:
-
-    –Nombre del producto.
-    –Precio
-    –Imagen
+La aplicación reunirá la identidad del grupo. Permitirá a los usuarios escuchar música en vivo, gestionar la compra de entradas para eventos, explorar o comprar en el catálogo de productos y suscribirse a contenido exclusivo.
 
 
 ### Estudo de necesidades. Proposta de valor respecto ao que hai no mercado.
@@ -88,16 +52,10 @@ Tambien tendremos contenidos exclusivos o membresías para los seguidores que se
 
 ## Requirimentos
 
-Requerimientos funcionales:
-    -La web deberá mostrar información corporativa del colectivo en una sección de inicio.
-    -Mostrará la información de los artistas junto a la imagen más el nombre artístico de estos
-    -Mostrara releases y podcast musicales permitiendo su reproduccion desde el navegador
-    -Mostrará los próximos eventos junto a un enlace que permitira la compra de estas entradas
-    -Permitirá la visualización de los productos junto con el precio y el nombre de estos
-    -Permitirá la opción de registrarse en la newsletter para obtener beneficios
-    
-Requerimientos no funcionales:
-    -La web deberá ser intuitiva y facil de navegar en ella
-    -La web tendrá un diseño responsive que se adaptará a los distintos dispositivos electrónicos
-    -Los datos de los usuarios registrados deberán almacenarse de forma segura
-    -Tendrá que estar disponible 24/7
+La infraestructura del proyecto se basará en Hostinger y utilizará una base de datos PostgreSQL para gestionar toda la información de forma relacional. La web no almacenará archivos de audio pesados, sino que funcionará como una plataforma de gestión que incorpora los reproductores externos de distintas webs mediante enlaces, lo que garantiza rapidez y estabilidad.
+
+En el Backend, vamos a utilizar Python como lenguaje de programación y el framework Django. Usaremos Class-Based Views en Django. Para identificar y mantener las sesiones de los usuarios, emplearemos el motor de Sessions de Django.
+La seguridad del sitio es muy importante. Por eso, vamos a reforzarla con CSRF tokens en los formularios.De esta manera, podemos garantizar que la información de los usuarios esté protegida.
+
+El frontend se desarrollará con Vue.js 3. Para el diseño y la estética visual de la interfaz, se utilizarán hojas de estilo CSS. De esta manera, se logrará un aspecto moderno y profesional, totalmente adaptable a dispositivos móviles.
+
