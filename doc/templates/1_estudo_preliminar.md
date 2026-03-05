@@ -50,7 +50,9 @@ Musica:
         –Precio de la entrada.
         –Enlace de compra.
 
+
 Merchandising:
+
     –Nombre del producto.
     –Precio
     –Imagen
