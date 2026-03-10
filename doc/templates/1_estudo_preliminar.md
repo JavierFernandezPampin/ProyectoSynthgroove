@@ -52,7 +52,7 @@ Tambien tendremos contenidos exclusivos o membresías para los seguidores que se
 
 ## Requirimentos
 
-La infraestructura del proyecto se basará en Hostinger y utilizará una base de datos PostgreSQL para gestionar toda la información de forma relacional. La web no almacenará archivos de audio pesados, sino que funcionará como una plataforma de gestión que incorpora los reproductores externos de distintas webs mediante enlaces, lo que garantiza rapidez y estabilidad.
+La infraestructura del proyecto se basará en Hostinger y utilizará una base de datos MySQL para gestionar toda la información de forma relacional. La web no almacenará archivos de audio pesados, sino que funcionará como una plataforma de gestión que incorpora los reproductores externos de distintas webs mediante enlaces, lo que garantiza rapidez y estabilidad.
 
 En el Backend, vamos a utilizar Python como lenguaje de programación y el framework Django. Usaremos Class-Based Views en Django. Para identificar y mantener las sesiones de los usuarios, emplearemos el motor de Sessions de Django.
 La seguridad del sitio es muy importante. Por eso, vamos a reforzarla con CSRF tokens en los formularios.De esta manera, podemos garantizar que la información de los usuarios esté protegida.
