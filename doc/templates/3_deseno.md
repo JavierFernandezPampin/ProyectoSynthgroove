@@ -9,7 +9,7 @@
 erDiagram
 
 ARTISTS {
-    
+
     int id PK
     string name
     string description
@@ -24,6 +24,7 @@ RELEASES {
 }
 
 PODCASTS {
+
     int id PK
     string title
     string url
@@ -31,6 +32,7 @@ PODCASTS {
 }
 
 EVENTS {
+
     int id PK
     string name
     string location
@@ -38,11 +40,13 @@ EVENTS {
 }
 
 CATEGORIES {
+
     int id PK
     string name
 }
 
 PRODUCTS {
+
     int id PK
     string name
     float price
@@ -50,6 +54,7 @@ PRODUCTS {
 }
 
 NEWSLETTER {
+    
     int id PK
     string email
 }
