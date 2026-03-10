@@ -60,5 +60,7 @@ NEWSLETTER {
 }
 
 ARTISTS ||--o{ RELEASES : creates
+
 ARTISTS ||--o{ PODCASTS : creates
+
 CATEGORIES ||--o{ PRODUCTS : contains
