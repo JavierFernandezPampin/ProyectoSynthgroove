@@ -9,12 +9,14 @@
 erDiagram
 
 ARTISTS {
+    
     int id PK
     string name
     string description
 }
 
 RELEASES {
+
     int id PK
     string title
     string url
