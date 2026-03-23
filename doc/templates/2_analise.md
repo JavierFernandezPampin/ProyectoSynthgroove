@@ -13,11 +13,13 @@ Requerimientos funcionales:
     -Mostrara releases y podcast musicales permitiendo su reproduccion desde el navegador
     -Mostrará los próximos eventos junto a un enlace que permitira la compra de estas entradas
     -Permitirá la visualización de los productos junto con el precio y el nombre de estos
+    -Cada producto dispondrá de un botón para reservar mediante un mensaje predeterminado al WhatsApp de la empresa.
     -Permitirá la opción de registrarse en la newsletter para obtener beneficios
     -Se incluirá un sistema de búsqueda y/o filtrado para facilitar la localización de artistas, eventos o productos.
     -Se implementará un sistema de autenticación para administradores, permitiendo el acceso mediante login a un panel restringido.
     -Los usuarios administradores podrán crear, editar y eliminar artistas y sets/releases desde un panel de gestión.
     -El sistema de administración permitirá la gestión completa de contenidos (artistas, eventos, productos y releases) mediante operaciones CRUD.
+    
     
 Requerimientos no funcionales:
 
