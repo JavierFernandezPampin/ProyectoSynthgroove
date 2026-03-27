@@ -12,6 +12,7 @@ El azul es el color principal. El negro también es importante porque representa
 
 
 ## Diagrama de Bases de Datos
+
 ```mermaid
 erDiagram
 
