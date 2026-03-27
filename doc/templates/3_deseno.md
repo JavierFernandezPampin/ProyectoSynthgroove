@@ -13,59 +13,58 @@ El azul es el color principal. El negro también es importante porque representa
 
 ## Diagrama de Bases de Datos
 
+```mermaid
+
 erDiagram
 
-ARTISTS {
+ARTISTAS {
     int id PK
-    string name
-    string description
-    string image
+    string nombre
+    string descripcion
+    string imagen
 }
 
 RELEASES {
     int id PK
-    string title
+    string titulo
     string url
-    string image
-    date release_date
-    int artist_id FK
+    string imagen
+    date fecha_release
+    int artistas_id
 }
 
 PODCASTS {
     int id PK
     string title
     string url
-    string image
-    date release_date
-    int artist_id FK
+    string imagen
+    date fecha_release
+    int artistas_id
 }
 
-EVENTS {
+EVENTOS {
     int id PK
-    string name
-    string location
-    date event_date
-    string image
+    string nombre
+    string localizacion
+    date fecha_release
+    string imagen
 }
 
-CATEGORIES {
+PRODUCTOS {
     int id PK
-    string name
+    string nombre
+    float precio
+    string imagen
+    string categoria
 }
 
-PRODUCTS {
+USUARIOS {
     int id PK
-    string name
-    float price
-    string image
-    int category_id FK
+    string mail
+    string contrasena
+    string tipo
 }
 
-NEWSLETTER {
-    int id PK
-    string email
-}
-
-ARTISTS ||--o{ RELEASES : creates
-ARTISTS ||--o{ PODCASTS : creates
-CATEGORIES ||--o{ PRODUCTS : contains
+ARTISTAS ||--o{ RELEASES : tienen
+ARTISTAS ||--o{ PODCASTS : tienen
+```
