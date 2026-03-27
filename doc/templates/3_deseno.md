@@ -64,6 +64,6 @@ USUARIOS{
     string tipo
 }
 
-ARTISTS ||--o{ RELEASES : tienen
-ARTISTS ||--o{ PODCASTS : tienen
+ARTISTAS ||--o{ RELEASES : tienen
+ARTISTAS ||--o{ PODCASTS : tienen
 ```
