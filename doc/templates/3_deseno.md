@@ -13,6 +13,8 @@ El azul es el color principal. El negro también es importante porque representa
 
 ## Diagrama de Bases de Datos
 
+```mermaid
+
 erDiagram
 
 ARTISTAS {
@@ -65,3 +67,4 @@ USUARIOS {
 
 ARTISTAS ||--o{ RELEASES : tienen
 ARTISTAS ||--o{ PODCASTS : tienen
+```
