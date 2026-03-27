@@ -16,58 +16,55 @@ El azul es el color principal. El negro también es importante porque representa
 ```mermaid
 erDiagram
 
-ARTISTS {
-    int id PK
-    string name
-    string description
-    string image
+ARTISTAS {
+    int id PK auto_increment
+    string nombre
+    string descripcion
+    string imagen
 }
 
 RELEASES {
-    int id PK
-    string title
+    int id PK auto_increment
+    string titulo
     string url
-    string image
-    date release_date
-    int artist_id FK
+    string imagen
+    date fecha_release
+    int artistas_id FK
 }
 
 PODCASTS {
-    int id PK
+    int id PK auto_increment
     string title
     string url
-    string image
-    date release_date
-    int artist_id FK
+    string imagen
+    date fecha_release
+    int artistas_id FK
 }
 
-EVENTS {
-    int id PK
-    string name
-    string location
-    date event_date
-    string image
+EVENTOS {
+    int id PK auto_increment
+    string nombre
+    string localizacion
+    date fecha_release
+    string imagen
 }
 
-CATEGORIES {
-    int id PK
-    string name
+
+PRODUCTOS {
+    int id PK auto_increment
+    string nombre
+    float precio
+    string imagen
+    string categoria
 }
 
-PRODUCTS {
-    int id PK
-    string name
-    float price
-    string image
-    int category_id FK
+USUARIOS{
+    int id PK auto_increment
+    string mail
+    string contraseña
+    string tipo
 }
 
-NEWSLETTER {
-    int id PK
-    string email
-}
-
-ARTISTS ||--o{ RELEASES : creates
-ARTISTS ||--o{ PODCASTS : creates
-CATEGORIES ||--o{ PRODUCTS : contains
+ARTISTS ||--o{ RELEASES : tienen
+ARTISTS ||--o{ PODCASTS : tienen
 ```
