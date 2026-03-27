@@ -67,4 +67,10 @@ USUARIOS {
 
 ARTISTAS ||--o{ RELEASES : tienen
 ARTISTAS ||--o{ PODCASTS : tienen
+
+USUARIOS ||--o{ ARTISTAS : crean_modifican
+USUARIOS ||--o{ RELEASES : crean_modifican
+USUARIOS ||--o{ PODCASTS : crean_modifican
+USUARIOS ||--o{ EVENTOS : crean_modifican
+USUARIOS ||--o{ PRODUCTOS : crean_modifican
 ```
