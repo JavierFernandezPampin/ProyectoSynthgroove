@@ -49,7 +49,6 @@ EVENTOS {
     string imagen
 }
 
-
 PRODUCTOS {
     int id PK auto_increment
     string nombre
