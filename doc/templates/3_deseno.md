@@ -65,7 +65,7 @@ USUARIOS {
     int id PK
     string usuario
     string mail
-    string contraseña
+    string contrasena
     string rol
 }
 
