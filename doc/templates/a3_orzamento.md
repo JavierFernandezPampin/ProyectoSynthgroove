@@ -56,6 +56,6 @@ Os custos materiais do proxecto son reducidos, xa que se emprega principalmente 
 
 Isto supón un total de 60 euros en recursos materiais.
 
-Orzamento total
+<strong>Orzamento total</strong>
 
 Sumando os custos humanos e materiais, o orzamento total estimado do proxecto ascende a 2160 euros.
