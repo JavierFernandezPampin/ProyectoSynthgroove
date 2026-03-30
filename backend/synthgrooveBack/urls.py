@@ -16,7 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from synthgrooveApp.views import (
+    ArtistaListCreateAPI, ArtistaDetailAPI,
+    EventoListCreateAPI, EventoDetailAPI,
+    ProductoListCreateAPI, ProductoDetailAPI,
+)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("api/artistas/", ArtistaListCreateAPI.as_view(), name="api_artistas"),
+    path("api/artistas/<int:pk>/", ArtistaDetailAPI.as_view(), name="api_artista_detail"),
+
+    path("api/eventos/", EventoListCreateAPI.as_view(), name="api_eventos"),
+    path("api/eventos/<int:pk>/", EventoDetailAPI.as_view(), name="api_evento_detail"),
+
+    path("api/productos/", ProductoListCreateAPI.as_view(), name="api_productos"),
+    path("api/productos/<int:pk>/", ProductoDetailAPI.as_view(), name="api_producto_detail"),
 ]
