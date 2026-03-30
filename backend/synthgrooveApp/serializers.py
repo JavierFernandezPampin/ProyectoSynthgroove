@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Artista, Release, Podcast, Evento, Producto
+from .models import Artista, Release, Podcast, Evento, Producto,Usuario
 
 
 class ArtistaSerializer(serializers.ModelSerializer):
