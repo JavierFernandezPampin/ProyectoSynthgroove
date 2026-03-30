@@ -30,7 +30,7 @@ Requerimientos no funcionales:
 
 ## Tipos de usuarios
 
-Contara con 3 tipos de usuario:
+Contara con 4 roles de usuario:
 
 <strong>Visitantes</strong>:
 Los visitantes solo pueden leer la información de la plataforma. Pueden mirar la página de inicio, leer la biografía de los artistas, ver el catálogo de merchandising y escuchar los podcasts o releases que están disponibles.
