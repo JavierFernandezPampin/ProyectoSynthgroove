@@ -63,8 +63,9 @@ PRODUCTOS {
 
 USUARIOS {
     int id PK
+    string usuario
     string mail
-    string contrasena
+    string contraseña
     string rol
 }
 
