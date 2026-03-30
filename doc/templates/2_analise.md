@@ -35,8 +35,11 @@ Contara con 3 tipos de usuario:
 <strong>Visitantes</strong>:
 Los visitantes solo pueden leer la información de la plataforma. Pueden mirar la página de inicio, leer la biografía de los artistas, ver el catálogo de merchandising y escuchar los podcasts o releases que están disponibles.
 
-<strong>Suscriptores</strong>:
+<strong>Suscriptores(newsletter)</strong>:
 Los suscriptores son usuarios que se han registrado en la plataforma. Gracias a esto, pueden acceder a ventajas especiales, recibir noticias personalizadas del colectivo y participar en la comunidad de manera interactiva.
+
+<strong>Gestor</strong>:
+El usuario gestor es un usuario registrado en la aplicación que, tras iniciar sesión, puede gestionar el contenido de la plataforma a través de un panel interno. Aunque tiene permisos para crear, editar y eliminar información, no tiene acceso al código ni a la base de datos a nivel técnico.
 
 <strong>Administrador</strong>:
 El administrador es el que tiene control total sobre la plataforma. Puede gestionar la base de datos, agregar nuevos artistas, actualizar la ropa que se vende, programar eventos y supervisar la lista de suscriptores.
