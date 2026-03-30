@@ -43,11 +43,11 @@ O desenvolvemento do proxecto estrutúrase en diferentes fases ao longo do tempo
 
 # Orzamento
 
-Recursos humanos
+<strong>Recursos humanos</strong>
 
 O tempo estimado de desenvolvemento é de aproximadamente 140 horas, distribuídas en 20 horas semanais durante 7 semanas. Considerando un custo aproximado de 15 euros por hora, o custo total do traballo sería de 2100 euros.
 
-Recursos materiais
+<strong>Recursos materiais</strong>
 
 Os custos materiais do proxecto son reducidos, xa que se emprega principalmente software libre. Os únicos gastos estimados son:
 
