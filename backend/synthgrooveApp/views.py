@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import generics, permissions
-from .models import Artista, Evento, Producto, Release, Podcast
+from .models import Artista, Evento, Producto, Release, Podcast,Usuario
 from .serializers import (
     ArtistaSerializer,
     EventoSerializer,
@@ -28,7 +28,7 @@ class ArtistaListCreateAPI(generics.ListCreateAPIView):
     permission_classes = [EsGestorOAdmin]
 
     def perform_create(self, serializer):
-        serializer.save(usuario=self.request.user)
+        serializer.save(creado_por=self.request.user)
 
 class ArtistaDetailAPI(generics.RetrieveUpdateDestroyAPIView):
     queryset = Artista.objects.all()
@@ -43,7 +43,7 @@ class ReleaseListCreateAPI(generics.ListCreateAPIView):
     permission_classes = [EsGestorOAdmin]
 
     def perform_create(self, serializer):
-        serializer.save(usuario=self.request.user)
+        serializer.save(creado_por=self.request.user)
 
 class ReleaseDetailAPI(generics.RetrieveUpdateDestroyAPIView):
     queryset = Release.objects.all()
@@ -58,7 +58,7 @@ class PodcastListCreateAPI(generics.ListCreateAPIView):
     permission_classes = [EsGestorOAdmin]
 
     def perform_create(self, serializer):
-        serializer.save(usuario=self.request.user)
+        serializer.save(creado_por=self.request.user)
 
 class PodcastDetailAPI(generics.RetrieveUpdateDestroyAPIView):
     queryset = Podcast.objects.all()
@@ -73,7 +73,7 @@ class EventoListCreateAPI(generics.ListCreateAPIView):
     permission_classes = [EsGestorOAdmin]
 
     def perform_create(self, serializer):
-        serializer.save(usuario=self.request.user)
+        serializer.save(creado_por=self.request.user)
 
 
 class EventoDetailAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -89,7 +89,7 @@ class ProductoListCreateAPI(generics.ListCreateAPIView):
     permission_classes = [EsGestorOAdmin]
 
     def perform_create(self, serializer):
-        serializer.save(usuario=self.request.user)
+        serializer.save(creado_por=self.request.user)
 
 class ProductoDetailAPI(generics.RetrieveUpdateDestroyAPIView):
     queryset = Producto.objects.all()
