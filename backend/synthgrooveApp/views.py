@@ -1,13 +1,21 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.views import View
+from django.contrib.auth import login, logout, authenticate
+from django.views.generic.edit import CreateView, FormView
+
 from rest_framework import generics, permissions
-from .models import Artista, Evento, Producto, Release, Podcast,Usuario
+
+from .models import Artista, Evento, Producto, Release, Podcast
 from .serializers import (
     ArtistaSerializer,
     EventoSerializer,
     ProductoSerializer,
     ReleaseSerializer,
-    PodcastSerializer,
+    PodcastSerializer
 )
+
+from .forms import RegistroForm, LoginForm
 
 # Create your views here.
 
@@ -95,3 +103,45 @@ class ProductoDetailAPI(generics.RetrieveUpdateDestroyAPIView):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
     permission_classes = [EsGestorOAdmin]
+
+
+#login , register ,logout 
+
+class RegisterView(CreateView):
+    form_class = RegistroForm
+    template_name = "usuarios/register.html"
+    success_url = reverse_lazy("home")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        login(self.request, self.object)
+        return response
+    
+
+class LoginView(FormView):
+    form_class = LoginForm
+    template_name = "usuarios/login.html"
+    success_url = reverse_lazy("home")
+
+    def form_valid(self, form):
+        email = form.cleaned_data["email"]
+        password = form.cleaned_data["password"]
+
+        usuario = authenticate(
+            self.request,
+            username=email,
+            password=password
+        )
+
+        if usuario is not None:
+            login(self.request, usuario)
+            return super().form_valid(form)
+
+        form.add_error(None, "Invalid email or password.")
+        return self.form_invalid(form)
+    
+
+class LogoutView(View):
+    def post(self, request):
+        logout(request)
+        return redirect("home")
