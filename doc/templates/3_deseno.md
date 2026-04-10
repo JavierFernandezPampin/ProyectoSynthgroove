@@ -64,9 +64,20 @@ PRODUCTOS {
 USUARIOS {
     int id PK
     string usuario
+    string nombre
+    string apellido
     string mail
     string contrasena
     string rol
+}
+
+PEDIDOS {
+    int id PK
+    int usuarios_id FK
+    int productos_id FK
+    int cantidad
+    float precio_unitario
+    date fecha
 }
 
 USUARIOS ||--o{ ARTISTAS : crean_modifican
@@ -76,5 +87,6 @@ USUARIOS ||--o{ EVENTOS : crean_modifican
 USUARIOS ||--o{ PRODUCTOS : crean_modifican
 ARTISTAS ||--o{ RELEASES : tienen
 ARTISTAS ||--o{ PODCASTS : tienen
+USUARIOS ||--o{ PEDIDOS : hacen
 
 ```
