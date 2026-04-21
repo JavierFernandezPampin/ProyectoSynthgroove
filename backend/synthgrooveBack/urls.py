@@ -23,6 +23,8 @@ from synthgrooveApp.views import (
 )
 
 urlpatterns = [
+    path("admin/", admin.site.urls),
+    
     path("api/artistas/", ArtistaListCreateAPI.as_view(), name="api_artistas"),
     path("api/artistas/<int:pk>/", ArtistaDetailAPI.as_view(), name="api_artista_detail"),
 
