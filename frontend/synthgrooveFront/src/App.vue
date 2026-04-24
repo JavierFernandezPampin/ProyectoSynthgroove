@@ -1,16 +1,25 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import logoBlanco from "./assets/img/logoBlanco.png";
 import synthgrooveCamiseta from "./assets/img/synthgrooveCamiseta.jpg"
+import imagenEvento from "./assets/img/imagenEvento.jpg"
+
+const cardsSection = ref<HTMLElement | null>(null)
+
+function scrollToCards() {
+  cardsSection.value?.scrollIntoView({ behavior: 'smooth' })
+}
 
 const sections = [
   {
     title: "Merchandising",
-    image: synthgrooveCamiseta
+    image: synthgrooveCamiseta,
+    isImage: true 
   },
   {
     title: "Eventos",
-    image:
-      "linear-gradient(180deg, rgba(44,38,25,.18), rgba(20,18,14,.88)), radial-gradient(circle at 70% 18%, rgba(254,233,180,.65), transparent 24%), linear-gradient(135deg, #9f7443, #352314 72%)",
+    image: imagenEvento,
+    isImage:true
   },
   {
     title: "Releases",
@@ -52,18 +61,25 @@ const sections = [
         >
           <source src="/videoInicio.mp4" type="video/mp4" />
         </video>
+
+        <button class="scroll-arrow" @click="scrollToCards" aria-label="Ver secciones">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
       </section>
 
-      <section class="sectionCards" aria-label="Secciones principales">
+      <section class="sectionCards" ref="cardsSection" aria-label="Secciones principales">
         <article
           v-for="section in sections"
           :key="section.title"
           class="section-card"
-          :style="{ '--card-image': section.image }"
+          :style="section.isImage 
+            ? { '--card-image': `url(${section.image})` } 
+            : { '--card-image': section.image }"
         >
           <div class="section-card__backdrop"></div>
           <div class="section-card__caption">
-
             <h2>{{ section.title }}</h2>
           </div>
           <div class="section-card__content">
@@ -85,7 +101,7 @@ const sections = [
   padding-top: 10px;
 }
 .brand-logo {
-  width:70px;
+  width: 70px;
   height: auto;
   object-fit: contain;
 }
@@ -113,6 +129,35 @@ const sections = [
   object-fit: cover;
 }
 
+/* FLECHA */
+.scroll-arrow {
+  position: absolute;
+  bottom: 6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #f7f1e8;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+  animation: bounce 2s infinite;
+}
+
+.scroll-arrow:hover {
+  opacity: 1;
+}
+
+.scroll-arrow svg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(8px); }
+}
 
 /* SECCION PANELES */
 .sectionCards {
@@ -123,16 +168,27 @@ const sections = [
   gap: 50px;
   padding-bottom: 100px;
 }
+
 .section-card {
   position: relative;
   flex: 1 1 0;
   min-width: 0;
   overflow: hidden;
   background: #111;
-  border: 1px solid white;
-  border-radius: 2px;
+  border-radius: 1px;
   cursor: pointer;
   transition: flex 0.7s ease;
+}
+
+.section-card + .section-card::before {
+  content: '';
+  position: absolute;
+  left: -26px;
+  top: 8%;
+  height: 84%;
+  width: 1px;
+  background: #5C5C5C;
+  z-index: 2;
 }
 
 .section-card__caption {
@@ -167,6 +223,16 @@ const sections = [
   line-height: 1.45;
   color: rgba(17, 17, 17, 0.78);
 }
+
+.section-card__backdrop {
+  position: absolute;
+  inset: 0;
+  background-image: var(--card-image);
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.7s ease, filter 0.7s ease;
+}
+
 .sectionCards:hover .section-card:hover {
   flex: 4.6 1 0;
 }
@@ -181,16 +247,14 @@ const sections = [
   transform: translate(-50%, -50%) scale(1);
   opacity: 1;
 }
-
 .sectionCards:hover .section-card:hover .section-card__caption {
   align-items: center;
   text-align: center;
 }
 .sectionCards:hover .section-card:hover .section-card__caption h2 {
   font-size: 2rem;
-  transition: font-size 0.5s ease , transform 0.5s ease-in-out;
+  transition: font-size 0.5s ease, transform 0.5s ease-in-out;
 }
-
 
 @media (max-width: 1040px) {
   .sectionCards {
@@ -212,9 +276,16 @@ const sections = [
     display: grid;
     width: 100%;
     min-height: auto;
+    gap: 0;
   }
   .section-card {
     min-height: 220px;
+  }
+  .section-card + .section-card::before {
+    left: 8%;
+    top: 0;
+    width: 84%;
+    height: 1px;
   }
   .section-card__content {
     width: min(78%, 22rem);
