@@ -1,10 +1,10 @@
 # URL da páxina web
-
+http://localhost:5173/
 # Deseño dos prototipos 
 
 ## Prototipo 1
-### Data de entrega: 
-### Funcionalidades implementadas:
+### Data de entrega: 21/04/2026
+### Funcionalidades implementadas: Añadida página de inicio con seccion de tarjetas
 ### Observacións: 
 ### Innovación: 
 
