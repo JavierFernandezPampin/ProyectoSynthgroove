@@ -6,7 +6,7 @@ from django.views.generic.edit import CreateView, FormView
 
 from rest_framework import generics, permissions
 
-from .models import Artista, Evento, Producto, Release, Podcast
+from .models import Artista, Evento, Producto, Release, Podcast, Usuario
 from .serializers import (
     ArtistaSerializer,
     EventoSerializer,
@@ -26,7 +26,7 @@ class EsGestorOAdmin(permissions.BasePermission):
             return True
         return (
             request.user.is_authenticated and
-            (request.user.es_gestor or request.user.es_admin)
+            request.user.rol in ['gestor', 'admin']
         )
 
 #artista
@@ -124,20 +124,18 @@ class LoginView(FormView):
     success_url = reverse_lazy("home")
 
     def form_valid(self, form):
-        email = form.cleaned_data["email"]
+        usuario_str = form.cleaned_data["usuario"]
         password = form.cleaned_data["password"]
 
-        usuario = authenticate(
-            self.request,
-            username=email,
-            password=password
-        )
+        try:
+            usuario = Usuario.objects.get(usuario=usuario_str)
+            if usuario.check_password(password):
+                login(self.request, usuario)
+                return super().form_valid(form)
+        except Usuario.DoesNotExist:
+            pass
 
-        if usuario is not None:
-            login(self.request, usuario)
-            return super().form_valid(form)
-
-        form.add_error(None, "Invalid email or password.")
+        form.add_error(None, "Invalid username or password.")
         return self.form_invalid(form)
     
 

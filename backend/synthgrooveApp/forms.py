@@ -14,17 +14,20 @@ class RegistroForm(forms.ModelForm):
 
     class Meta:
         model = Usuario
-        fields = ["username", "email"]
+        fields = ["usuario", "nombre", "apellido", "mail", "rol"]
         labels = {
-            "username": "Username",
-            "email": "Email",
+            "usuario": "Username",
+            "nombre": "Name",
+            "apellido": "Surname",
+            "mail": "Email",
+            "rol": "Role",
         }
 
     def mail_unico(self):
-        email = self.cleaned_data.get("email")
-        if Usuario.objects.filter(email=email).exists():
+        mail = self.cleaned_data.get("mail")
+        if Usuario.objects.filter(mail=mail).exists():
             raise forms.ValidationError("This email is already registered.")
-        return email
+        return mail
 
     def comprobar_password(self):
         cleaned_data = super().clean()
@@ -45,7 +48,7 @@ class RegistroForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(label="Email")
+    usuario = forms.CharField(label="Username", max_length=100)
     password = forms.CharField(
         label="Password",
         widget=forms.PasswordInput
