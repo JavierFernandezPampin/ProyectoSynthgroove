@@ -4,3 +4,4 @@ Pillow
 mysqlclient
 djangorestframework-simplejwt
 gunicorn
+django-cors-headers
