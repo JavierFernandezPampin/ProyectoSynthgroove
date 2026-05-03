@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.contrib.auth import login, logout, authenticate
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.views.generic.edit import CreateView, FormView
 
 from rest_framework import generics, permissions
@@ -107,39 +110,67 @@ class ProductoDetailAPI(generics.RetrieveUpdateDestroyAPIView):
 
 #login , register ,logout 
 
-class RegisterView(CreateView):
-    form_class = RegistroForm
-    template_name = "usuarios/register.html"
-    success_url = reverse_lazy("home")
+class RegisterAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
 
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        login(self.request, self.object)
-        return response
-    
+    def post(self, request):
+        mail = request.data.get("mail")
+        usuario = request.data.get("usuario")
+        password = request.data.get("password")
 
-class LoginView(FormView):
-    form_class = LoginForm
-    template_name = "usuarios/login.html"
-    success_url = reverse_lazy("home")
+        if not mail or not usuario or not password:
+            return Response({"error": "Todos los campos son obligatorios."}, status=400)
 
-    def form_valid(self, form):
-        usuario_str = form.cleaned_data["usuario"]
-        password = form.cleaned_data["password"]
+        if Usuario.objects.filter(mail=mail).exists():
+            return Response({"error": "El email ya está en uso."}, status=400)
+
+        if Usuario.objects.filter(usuario=usuario).exists():
+            return Response({"error": "El nombre de usuario ya está en uso."}, status=400)
+
+        user = Usuario.objects.create_user(mail=mail, usuario=usuario, password=password)
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+            "usuario": user.usuario,
+            "rol": user.rol,
+        }, status=201)
+
+
+class LoginAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        mail = request.data.get("mail")
+        password = request.data.get("password")
 
         try:
-            usuario = Usuario.objects.get(usuario=usuario_str)
-            if usuario.check_password(password):
-                login(self.request, usuario)
-                return super().form_valid(form)
+            user = Usuario.objects.get(mail=mail)
         except Usuario.DoesNotExist:
-            pass
+            return Response({"error": "Credenciales incorrectas."}, status=401)
 
-        form.add_error(None, "Invalid username or password.")
-        return self.form_invalid(form)
-    
+        if not user.check_password(password):
+            return Response({"error": "Credenciales incorrectas."}, status=401)
 
-class LogoutView(View):
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+            "usuario": user.usuario,
+            "rol": user.rol,
+        })
+
+
+class LogoutAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request):
-        logout(request)
-        return redirect("home")
+        try:
+            refresh_token = request.data.get("refresh")
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"message": "Sesión cerrada correctamente."})
+        except Exception:
+            return Response({"error": "Token inválido."}, status=400)

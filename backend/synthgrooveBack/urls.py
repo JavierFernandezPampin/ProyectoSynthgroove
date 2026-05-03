@@ -19,8 +19,9 @@ from django.urls import path
 from synthgrooveApp.views import (
     ArtistaListCreateAPI, ArtistaDetailAPI,
     EventoListCreateAPI, EventoDetailAPI,
-    ProductoListCreateAPI, ProductoDetailAPI,
+    ProductoListCreateAPI, ProductoDetailAPI,RegisterAPIView, LoginAPIView, LogoutAPIView
 )
+from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -33,4 +34,9 @@ urlpatterns = [
 
     path("api/productos/", ProductoListCreateAPI.as_view(), name="api_productos"),
     path("api/productos/<int:pk>/", ProductoDetailAPI.as_view(), name="api_producto_detail"),
+
+    path("api/auth/register/", RegisterAPIView.as_view(), name="api_register"),
+    path("api/auth/login/", LoginAPIView.as_view(), name="api_login"),
+    path("api/auth/logout/", LogoutAPIView.as_view(), name="api_logout"),
+    path("api/auth/refresh/", TokenRefreshView.as_view(), name="api_token_refresh"),
 ]
