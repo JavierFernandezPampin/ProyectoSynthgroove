@@ -9,8 +9,8 @@ http://localhost:5173/
 ### Innovación: 
 
 ## Prototipo 2
-### Data de entrega: 
-### Funcionalidades implementadas:
+### Data de entrega: 03/05/2026
+### Funcionalidades implementadas:Añadido login y registro para usuarios mas el despliegue a internet.
 ### Observacións: 
 ### Innovación: 
 
