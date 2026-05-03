@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+const API_URL = import.meta.env.VITE_API_URL;
 
 async function parseResponseBody(res) {
   const text = await res.text();
@@ -62,7 +63,9 @@ export const useAuthStore = defineStore("auth", {
       }
 
       if (!data?.access || !data?.refresh || !data?.usuario) {
-        throw new Error("La respuesta del servidor al iniciar sesión no es válida");
+        throw new Error(
+          "La respuesta del servidor al iniciar sesión no es válida",
+        );
       }
 
       this.access = data.access;
@@ -76,7 +79,7 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async logout() {
-      await fetch("/api/auth/logout/", {
+      await fetch(`${API_URL}/api/auth/logout/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,7 +98,7 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async register(mail, usuario, password) {
-      const res = await fetch("/api/auth/register/", {
+      const res = await fetch(`${API_URL}/api/auth/register/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mail, usuario, password }),
@@ -107,7 +110,9 @@ export const useAuthStore = defineStore("auth", {
       }
 
       if (!data?.access || !data?.refresh || !data?.usuario) {
-        throw new Error("La respuesta del servidor al registrarse no es válida");
+        throw new Error(
+          "La respuesta del servidor al registrarse no es válida",
+        );
       }
 
       this.access = data.access;
