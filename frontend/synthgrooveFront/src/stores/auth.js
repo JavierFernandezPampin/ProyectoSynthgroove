@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL ?? "";
 
 async function parseResponseBody(res) {
   const text = await res.text();
