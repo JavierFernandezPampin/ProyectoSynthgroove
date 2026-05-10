@@ -54,10 +54,16 @@ class EventoSerializer(serializers.ModelSerializer):
 
 
 class ProductoSerializer(serializers.ModelSerializer):
+    imagen = serializers.SerializerMethodField()
+
+    def get_imagen(self, obj):
+        if obj.imagen:
+            return f"https://proyecto-fct-synthgroove.onrender.com/media/{obj.imagen}"
+        return None
+
     class Meta:
         model = Producto
         fields = "__all__"
-
 
 class PedidoSerializer(serializers.ModelSerializer):
     class Meta:

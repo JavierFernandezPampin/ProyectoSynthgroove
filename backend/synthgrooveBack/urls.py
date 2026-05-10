@@ -22,6 +22,8 @@ from synthgrooveApp.views import (
     ProductoListCreateAPI, ProductoDetailAPI,RegisterAPIView, LoginAPIView, LogoutAPIView
 )
 from rest_framework_simplejwt.views import TokenRefreshView
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -40,3 +42,4 @@ urlpatterns = [
     path("api/auth/logout/", LogoutAPIView.as_view(), name="api_logout"),
     path("api/auth/refresh/", TokenRefreshView.as_view(), name="api_token_refresh"),
 ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

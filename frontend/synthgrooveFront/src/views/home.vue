@@ -7,41 +7,43 @@ function scrollToCards() {
   cardsSection.value?.scrollIntoView({ behavior: "smooth" });
 }
 
-const synthgrooveCamiseta = new URL(
-  "../assets/img/synthgrooveCamiseta.jpg",
-  import.meta.url,
-).href;
+const camisetaUrl = new URL("../assets/img/cami.webp", import.meta.url).href;
 const imagenEvento = new URL("../assets/img/imagenEvento.jpg", import.meta.url)
   .href;
+const tadeo = new URL("../assets/img/tadeo.jpg", import.meta.url).href;
+const ycoxxx = new URL("../assets/img/ycox.jpg", import.meta.url).href;
+const oss = new URL("../assets/img/oss.jpg", import.meta.url).href;
 
 const sections = [
   {
     title: "Merchandising",
-    image: synthgrooveCamiseta,
+    image: camisetaUrl,
     isImage: true,
+    path: "/merchandising",
   },
   {
     title: "Eventos",
     image: imagenEvento,
     isImage: true,
+    path: "/eventos",
   },
   {
     title: "Releases",
-    image:
-      "linear-gradient(180deg, rgba(27,39,50,.15), rgba(15,19,24,.88)), radial-gradient(circle at 32% 24%, rgba(191,227,255,.6), transparent 24%), linear-gradient(135deg, #7b97a8, #243342 72%)",
-    isImage: false,
+    image: tadeo,
+    isImage: true,
+    path: "/releases",
   },
   {
     title: "Podcasts",
-    image:
-      "linear-gradient(180deg, rgba(17,39,53,.18), rgba(10,18,25,.88)), radial-gradient(circle at 65% 18%, rgba(151,255,236,.58), transparent 24%), linear-gradient(135deg, #2d7985, #1e2a3f 72%)",
-    isImage: false,
+    image: ycoxxx,
+    isImage: true,
+    path: "/podcasts",
   },
   {
     title: "Sobre",
-    image:
-      "linear-gradient(180deg, rgba(36,18,44,.16), rgba(18,12,25,.88)), radial-gradient(circle at 50% 15%, rgba(255,218,183,.44), transparent 22%), linear-gradient(135deg, #6f6079, #231929 72%)",
-    isImage: false,
+    image: oss,
+    isImage: true,
+    path: "/sobre",
   },
 ];
 </script>
@@ -73,14 +75,11 @@ const sections = [
         </button>
       </section>
 
-      <section
-        class="sectionCards"
-        ref="cardsSection"
-        aria-label="Secciones principales"
-      >
-        <article
-          v-for="section in sections"
+      <section class="sectionCards" ref="cardsSection">
+        <router-link
+          v-for="(section, i) in sections"
           :key="section.title"
+          :to="section.path"
           class="section-card"
           :style="{
             '--card-image': section.isImage
@@ -90,17 +89,15 @@ const sections = [
         >
           <div class="section-card__backdrop"></div>
           <div class="section-card__caption">
+            <span class="section-card__index">0{{ i + 1 }}</span>
             <h2>{{ section.title }}</h2>
+            <span class="section-card__arrow">→</span>
           </div>
-          <div class="section-card__content">
-            <h3>{{ section.title }}</h3>
-          </div>
-        </article>
+        </router-link>
       </section>
     </main>
   </div>
 </template>
-
 <style scoped>
 .home-shell {
   background: black;
@@ -110,8 +107,9 @@ const sections = [
 
 .contenidoPrincipal {
   display: grid;
-  gap: 1.5rem;
+  gap: 0;
 }
+
 .videoSection {
   position: relative;
   width: min(100%, 920px);
@@ -158,85 +156,44 @@ const sections = [
   }
 }
 
+/* ── GRID DE CARDS ── */
 .sectionCards {
-  display: flex;
-  width: min(100%, 1000px);
-  min-height: 500px;
-  margin-inline: auto;
-  gap: 50px;
-  padding-bottom: 100px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  gap: 0;
+  padding-bottom: 0;
 }
+
+/* Primera card ocupa todo el ancho */
+.section-card:first-child {
+  grid-column: 1 / -1;
+  min-height: 420px;
+}
+.section-card:first-child .section-card__body {
+  min-height: 420px;
+}
+.section-card:first-child .section-card__caption h2 {
+  font-size: clamp(3rem, 8vw, 6rem);
+}
+
 .section-card {
   position: relative;
-  flex: 1 1 0;
-  min-width: 0;
+  min-height: 300px;
   overflow: hidden;
   background: #111;
-  border-radius: 1px;
   cursor: pointer;
-  transition: flex 0.7s ease;
-}
-.section-card + .section-card::before {
-  content: "";
-  position: absolute;
-  left: -26px;
-  top: 8%;
-  height: 84%;
-  width: 1px;
-  background: #5c5c5c;
-  z-index: 2;
-}
-.section-card__caption {
-  position: relative;
-  z-index: 1;
+  text-decoration: none;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  height: 100%;
-  padding: 1.2rem;
-  background: linear-gradient(
-    180deg,
-    rgba(24, 24, 24, 0.04),
-    rgba(24, 24, 24, 0.68)
-  );
-  color: #f7f1e8;
+  border: 1px solid #111;
 }
-.section-card__caption h2 {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 700;
-  line-height: 1.05;
-  text-transform: uppercase;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.24);
+
+/* Separador entre cards */
+.section-card + .section-card {
+  border-left: 1px solid #1a1a1a;
 }
-.section-card__content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 1;
-  width: 100%;
-  transform: translate(-50%, -50%) scale(0);
-  opacity: 0;
-  transition:
-    transform 0.7s ease,
-    opacity 0.7s ease;
-  text-align: center;
-  color: #f7f1e8;
-}
-.section-card__content h3 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.24);
-}
-.section-card__content p {
-  margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.45;
-  color: rgba(17, 17, 17, 0.78);
-}
+
 .section-card__backdrop {
   position: absolute;
   inset: 0;
@@ -244,74 +201,92 @@ const sections = [
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  filter: brightness(0.45);
   transition:
-    transform 0.7s ease,
-    filter 0.7s ease;
-}
-.sectionCards:hover .section-card:hover {
-  flex: 4.6 1 0;
-}
-.sectionCards:hover .section-card:not(:hover) .section-card__backdrop {
-  filter: saturate(0.82) brightness(0.82);
-}
-.sectionCards:hover .section-card:hover .section-card__backdrop {
-  transform: scale(1.06);
-  filter: brightness(0.7);
-}
-.sectionCards:hover .section-card:hover .section-card__content {
-  transform: translate(-50%, -50%) scale(1);
-  opacity: 1;
-}
-.sectionCards:hover .section-card:hover .section-card__caption {
-  align-items: center;
-  text-align: center;
-}
-.sectionCards:hover .section-card:hover .section-card__caption h2 {
-  font-size: 2rem;
-  transition:
-    font-size 0.5s ease,
-    transform 0.5s ease-in-out;
+    transform 0.6s ease,
+    filter 0.6s ease;
 }
 
-@media (max-width: 1040px) {
-  .sectionCards {
-    min-height: 360px;
-  }
+.section-card:hover .section-card__backdrop {
+  transform: scale(1.04);
+  filter: brightness(0.3);
 }
+
+/* Número índice */
+.section-card__index {
+  position: absolute;
+  top: 1.5rem;
+  left: 2rem;
+  z-index: 2;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: #444;
+}
+
+.section-card__caption {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  min-height: 300px;
+  padding: 2rem;
+}
+
+.section-card__caption h2 {
+  margin: 0;
+  font-size: clamp(1.8rem, 4vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #f7f1e8;
+  transition: letter-spacing 0.4s ease;
+}
+
+.section-card:hover .section-card__caption h2 {
+  letter-spacing: 0.12em;
+}
+
+/* Flecha que aparece en hover */
+.section-card__arrow {
+  display: block;
+  margin-top: 1rem;
+  font-size: 1.5rem;
+  color: #f7f1e8;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.section-card:hover .section-card__arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Oculta el content antiguo */
+.section-card__content {
+  display: none;
+}
+
 @media (max-width: 700px) {
-  .home-shell {
-    padding: 0.7rem;
+  .sectionCards {
+    grid-template-columns: 1fr;
   }
-  .videoSection {
+  .section-card:first-child {
+    grid-column: 1;
     min-height: 280px;
   }
-  .sectionCards {
-    display: grid;
-    width: 100%;
-    min-height: auto;
-    gap: 0;
-  }
-  .section-card {
+  .section-card:first-child .section-card__body,
+  .section-card__caption {
     min-height: 220px;
   }
-  .section-card + .section-card::before {
-    left: 8%;
-    top: 0;
-    width: 84%;
-    height: 1px;
-  }
-  .section-card__content {
-    width: min(78%, 22rem);
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-  .sectionCards:hover .section-card,
-  .sectionCards:hover .section-card:hover {
-    flex: 1;
-  }
-  .sectionCards:hover .section-card__backdrop {
-    transform: none;
-    filter: brightness(0.7);
+  .section-card + .section-card {
+    border-left: none;
+    border-top: 1px solid #1a1a1a;
   }
 }
 </style>
