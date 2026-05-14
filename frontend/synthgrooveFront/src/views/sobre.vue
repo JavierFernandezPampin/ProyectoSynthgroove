@@ -53,55 +53,68 @@ function fixImageUrl(url: string | null): string {
       </p>
       <div class="separador"></div>
     </div>
+    <div v-if="loading" class="spinner-wrapper">
+      <div class="spinner"></div>
+    </div>
+    <div v-else class="row g-0">
+      <h2 class="titulo-artistas">ARTISTAS</h2>
+      <div class="separador"></div>
 
-    <h2 class="titulo-artistas">ARTISTAS</h2>
-    <div class="separador"></div>
-
-    <div class="artista-card" v-for="artista in artistas" :key="artista.nombre">
-      <img :src="artista.imagen" class="artista-img" />
-      <div class="artista-info">
-        <h3 class="artista-nombre">{{ artista.nombre }}</h3>
-        <p class="artista-bio">{{ artista.descripcion }}</p>
-        <div class="artista-links">
-          <a
-            v-if="artista.instagram"
-            :href="artista.instagram"
-            target="_blank"
-            class="artista-link"
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
+      <div
+        class="artista-card"
+        v-for="artista in artistas"
+        :key="artista.nombre"
+      >
+        <img :src="artista.imagen" class="artista-img" />
+        <div class="artista-info">
+          <h3 class="artista-nombre">{{ artista.nombre }}</h3>
+          <p class="artista-bio">{{ artista.descripcion }}</p>
+          <div class="artista-links">
+            <a
+              v-if="artista.instagram"
+              :href="artista.instagram"
+              target="_blank"
+              class="artista-link"
             >
-              <rect x="2" y="2" width="20" height="20" rx="5" />
-              <circle cx="12" cy="12" r="4" />
-              <circle
-                cx="17.5"
-                cy="6.5"
-                r="1"
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <rect x="2" y="2" width="20" height="20" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle
+                  cx="17.5"
+                  cy="6.5"
+                  r="1"
+                  fill="currentColor"
+                  stroke="none"
+                />
+              </svg>
+              instagram
+            </a>
+            <a
+              v-if="artista.soundcloud"
+              :href="artista.soundcloud"
+              target="_blank"
+              class="artista-link"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
                 fill="currentColor"
-                stroke="none"
-              />
-            </svg>
-            instagram
-          </a>
-          <a
-            v-if="artista.soundcloud"
-            :href="artista.soundcloud"
-            target="_blank"
-            class="artista-link"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M1.175 12.225c-.042 0-.08.03-.083.072l-.445 3.902.445 3.77c.003.04.041.072.083.072.04 0 .077-.03.08-.072l.504-3.77-.504-3.902c-.003-.042-.04-.072-.08-.072zm1.57-.9c-.05 0-.09.037-.094.085l-.38 4.787.38 4.6c.004.05.044.085.094.085.048 0 .088-.036.092-.085l.43-4.6-.43-4.787c-.004-.048-.044-.085-.092-.085zm1.59-.4c-.057 0-.104.045-.107.1l-.32 5.187.32 4.43c.003.057.05.1.107.1.056 0 .102-.043.106-.1l.362-4.43-.362-5.187c-.004-.055-.05-.1-.106-.1zm4.17-3.8c-.23-.087-.476-.134-.732-.134-1.173 0-2.13.87-2.248 1.99-.06.003-.118.01-.175.018v9.337c.057.006.114.01.175.01h6.79c.9 0 1.63-.73 1.63-1.63 0-.9-.73-1.63-1.63-1.63-.09 0-.177.008-.263.022.04-.178.062-.363.062-.553 0-1.46-1.183-2.643-2.643-2.643-.36 0-.703.072-1.016.203z"
-              />
-            </svg>
-            soundcloud
-          </a>
+              >
+                <path
+                  d="M1.175 12.225c-.042 0-.08.03-.083.072l-.445 3.902.445 3.77c.003.04.041.072.083.072.04 0 .077-.03.08-.072l.504-3.77-.504-3.902c-.003-.042-.04-.072-.08-.072zm1.57-.9c-.05 0-.09.037-.094.085l-.38 4.787.38 4.6c.004.05.044.085.094.085.048 0 .088-.036.092-.085l.43-4.6-.43-4.787c-.004-.048-.044-.085-.092-.085zm1.59-.4c-.057 0-.104.045-.107.1l-.32 5.187.32 4.43c.003.057.05.1.107.1.056 0 .102-.043.106-.1l.362-4.43-.362-5.187c-.004-.055-.05-.1-.106-.1zm4.17-3.8c-.23-.087-.476-.134-.732-.134-1.173 0-2.13.87-2.248 1.99-.06.003-.118.01-.175.018v9.337c.057.006.114.01.175.01h6.79c.9 0 1.63-.73 1.63-1.63 0-.9-.73-1.63-1.63-1.63-.09 0-.177.008-.263.022.04-.178.062-.363.062-.553 0-1.46-1.183-2.643-2.643-2.643-.36 0-.703.072-1.016.203z"
+                />
+              </svg>
+              soundcloud
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -211,6 +224,28 @@ function fixImageUrl(url: string | null): string {
   .artista-img {
     width: 100%;
     height: 240px;
+  }
+}
+
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 2px solid #333;
+  border-top-color: #f7f1e8;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 </style>
