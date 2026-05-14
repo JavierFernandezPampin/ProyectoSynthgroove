@@ -1,3 +1,40 @@
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { getArtistas } from "@/services/artistService";
+
+interface Artista {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  instagram: string;
+  soundcloud: string;
+  imagen: string;
+}
+
+const artistas = ref<Artista[]>([]);
+const loading = ref(true);
+
+onMounted(async () => {
+  try {
+    artistas.value = await getArtistas();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
+});
+
+// Cogemos la URL base de las variables de entorno, si no existe usamos cadena vacía
+const BASE_URL = import.meta.env.VITE_API_URL || "";
+
+// El backend devuelve las imágenes con una URL interna de Docker (backend:8000)
+// que el navegador no entiende, así que la cambiamos por localhost:8000
+function fixImageUrl(url: string | null): string {
+  if (!url) return "";
+  return url.replace("http://backend:8000", BASE_URL);
+}
+</script>
+
 <template>
   <div class="sobre-wrapper">
     <h1 class="titulo-sobre">SOBRE NOSOTROS</h1>
@@ -10,22 +47,13 @@
         la calidad de los artistas de la escena nacional y comunitaria en
         conjunto con artistas de la escena global. Todo ello en un espacio libre
         de prejuicios y estereotipos, donde el respeto hacia esta visión y su
-        comunidad favorezca el enriquecimiento de la cultura techno. Bienvenidos
-        a la experiencia SYNTHGROOVE.
+        comunidad favorezca el enriquecimiento de la cultura techno.
+        <br />
+        Bienvenidos a la experiencia SYNTHGROOVE.
       </p>
       <div class="separador"></div>
-      <p class="descripcion">
-        SYNTHGROOVE was born with the purpose of showing his particular vision
-        of techno within the current electronic scene. Highlighting and
-        promoting the quality of artists from the national and community scene
-        in conjunction with artists from the global scene. All this in a space
-        free of prejudice and stereotypes, where respect for this vision and its
-        community favours the enrichment of techno culture. Welcome to the
-        SYNTHGROOVE experience.
-      </p>
     </div>
 
-    <div class="separador"></div>
     <h2 class="titulo-artistas">ARTISTAS</h2>
     <div class="separador"></div>
 
@@ -33,7 +61,7 @@
       <img :src="artista.imagen" class="artista-img" />
       <div class="artista-info">
         <h3 class="artista-nombre">{{ artista.nombre }}</h3>
-        <p class="artista-bio">{{ artista.bio }}</p>
+        <p class="artista-bio">{{ artista.descripcion }}</p>
         <div class="artista-links">
           <a
             v-if="artista.instagram"
@@ -80,46 +108,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-const ycoxxxImg = new URL(
-  "../assets/img/478401797_18151499806359791_2532489274665148093_n.jpg",
-  import.meta.url,
-).href;
-const ossImg = new URL("../assets/img/oss.jpg", import.meta.url).href;
-const velo = new URL("../assets/img/velo.jpg", import.meta.url).href;
-const weisheit = new URL("../assets/img/wei.jpg", import.meta.url).href;
-const artistas = [
-  {
-    nombre: "YCOXXX",
-    bio: "Tu descripción aquí...",
-    instagram: "https://www.instagram.com/ycox.x.x/",
-    soundcloud: "https://soundcloud.com/ycoxxx",
-    imagen: ycoxxxImg,
-  },
-  {
-    nombre: "OSS",
-    bio: "Tu descripción aquí...",
-    instagram: "https://www.instagram.com/disc0sss/",
-    soundcloud: "https://soundcloud.com/mylittlehorny",
-    imagen: ossImg,
-  },
-  {
-    nombre: "VELO999",
-    bio: "Tu descripción aquí...",
-    instagram: "https://www.instagram.com/velo999_/",
-    soundcloud: "https://soundcloud.com/v3loo",
-    imagen: velo,
-  },
-  {
-    nombre: "WEISHEIT",
-    bio: "Tu descripción aquí...",
-    instagram: "https://www.instagram.com/weisheit_dj/",
-    soundcloud: "https://soundcloud.com/weisheit_dj",
-    imagen: weisheit,
-  },
-];
-</script>
-
 <style>
 .sobre-wrapper {
   max-width: 900px;
@@ -149,10 +137,11 @@ const artistas = [
 }
 
 .descripcion {
-  font-size: 1rem;
+  font-size: 20px;
   color: #f7f1e8;
   line-height: 1.8;
   margin: 0;
+  text-align: center;
 }
 
 .artista-card {

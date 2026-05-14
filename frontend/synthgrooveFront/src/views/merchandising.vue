@@ -20,16 +20,31 @@ onMounted(async () => {
     console.error(error);
   }
 });
+
+const loading = ref(true);
+
+onMounted(async () => {
+  try {
+    productos.value = await getProductos();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
+});
 </script>
 <template>
   <div class="merch-wrapper">
     <h1 class="titulo-merch">MERCHANDISING</h1>
     <div class="separador"></div>
 
-    <div class="row g-0">
+    <div v-if="loading" class="spinner-wrapper">
+      <div class="spinner"></div>
+    </div>
+    <div v-else class="row g-0">
       <div class="col-md-6" v-for="producto in productos" :key="producto.id">
         <div class="producto-card">
-          <img :src="producto.imagen" />
+          <img :src="producto.imagen" class="producto-img" />
           <div class="producto-info">
             <h5 class="producto-nombre">{{ producto.nombre }}</h5>
             <p class="producto-descripcion">{{ producto.descripcion }}</p>
@@ -142,5 +157,27 @@ onMounted(async () => {
 .btn-reservar:hover {
   color: #666;
   border-color: #666;
+}
+
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 2px solid #333;
+  border-top-color: #f7f1e8;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

@@ -55,7 +55,9 @@ class Artista(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField()
     imagen = models.ImageField(upload_to="artistas/", blank=True, null=True)
-
+    instagram = models.URLField(blank=True, null=True)
+    soundcloud = models.URLField(blank=True, null=True)
+    
     usuario = models.ForeignKey(Usuario,on_delete=models.SET_NULL,null=True,blank=True,related_name="artistas")
 
     def __str__(self):
@@ -66,7 +68,7 @@ class Release(models.Model):
     titulo = models.CharField(max_length=150)
     url = models.URLField()
     imagen = models.ImageField(upload_to="releases/", blank=True, null=True)
-    fecha_release = models.DateField()
+    fecha_release = models.DateField(null=True, blank=True)
     
     artista = models.ForeignKey(Artista,on_delete=models.CASCADE,related_name="releases")
     usuario = models.ForeignKey(Usuario,on_delete=models.SET_NULL,null=True,blank=True,related_name="releases")
@@ -79,7 +81,7 @@ class Podcast(models.Model):
     title = models.CharField(max_length=150)
     url = models.URLField()
     imagen = models.ImageField(upload_to="podcasts/", blank=True, null=True)
-    fecha_release = models.DateField()
+    fecha_release = models.DateField(null=True, blank=True)
 
     artista = models.ForeignKey(Artista,on_delete=models.CASCADE,related_name="podcasts")
     usuario = models.ForeignKey(Usuario,on_delete=models.SET_NULL,null=True,blank=True,related_name="podcasts")
@@ -91,7 +93,7 @@ class Podcast(models.Model):
 class Evento(models.Model):
     nombre = models.CharField(max_length=150)
     localizacion = models.CharField(max_length=200)
-    fecha_release = models.DateField()
+    fecha_release = models.DateField(null=True, blank=True)
     imagen = models.ImageField(upload_to="eventos/", blank=True, null=True)
 
     usuario = models.ForeignKey(Usuario,on_delete=models.SET_NULL,null=True,blank=True,related_name="eventos")

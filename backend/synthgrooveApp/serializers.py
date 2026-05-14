@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Artista, Release, Podcast, Evento, Producto, Usuario, Pedido
-
+import os
 
 #el serializer sirve para convertir los datos a json y poder leerlos en la web y viceversa
 class UsuarioSerializer(serializers.ModelSerializer):
@@ -29,11 +29,6 @@ class UsuarioSerializer(serializers.ModelSerializer):
         return instance
 
 
-class ArtistaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Artista
-        fields = "__all__"
-
 
 class ReleaseSerializer(serializers.ModelSerializer):
     class Meta:
@@ -58,13 +53,28 @@ class ProductoSerializer(serializers.ModelSerializer):
 
     def get_imagen(self, obj):
         if obj.imagen:
-            return f"https://proyecto-fct-synthgroove.onrender.com/media/{obj.imagen}"
+            backend_url = os.environ.get('BACKEND_URL', 'http://localhost:8000')
+            return f"{backend_url}/media/{obj.imagen}"
         return None
 
     class Meta:
         model = Producto
         fields = "__all__"
 
+class ArtistaSerializer(serializers.ModelSerializer):
+    podcasts = PodcastSerializer(many=True, read_only=True)
+    releases = ReleaseSerializer(many=True, read_only=True)
+    imagen = serializers.SerializerMethodField()
+
+    def get_imagen(self, obj):
+        if obj.imagen:
+            backend_url = os.environ.get('BACKEND_URL', 'http://localhost:8000')
+            return f"{backend_url}/media/{obj.imagen}"
+        return None
+
+    class Meta:
+        model = Artista
+        fields = "__all__"
 class PedidoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pedido

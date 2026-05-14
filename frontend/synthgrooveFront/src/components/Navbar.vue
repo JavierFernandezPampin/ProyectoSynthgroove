@@ -19,14 +19,22 @@ async function handleLogout() {
     <nav class="nav-auth">
       <template v-if="auth.isAuthenticated">
         <span class="nav-usuario">LOGIN AS: {{ auth.usuario }}</span>
-        <button class="nav-btn" @click="handleLogout">Cerrar sesión</button>
+        <button class="btn btn-outline-light btn-sm" @click="handleLogout">
+          Cerrar sesión
+        </button>
       </template>
       <template v-else>
-        <router-link class="nav-btn" to="/login">Iniciar sesión</router-link>
+        <router-link class="btn btn-outline-light btn-sm" to="/login">
+          Iniciar sesión
+        </router-link>
       </template>
     </nav>
 
-    <router-link class="brand-center brand-home" to="/" aria-label="Volver al inicio">
+    <router-link
+      class="brand-center brand-home"
+      to="/"
+      aria-label="Volver al inicio"
+    >
       <img
         class="brand-logo"
         :src="logoBlanco"

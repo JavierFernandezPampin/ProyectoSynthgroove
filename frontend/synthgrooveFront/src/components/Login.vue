@@ -9,14 +9,24 @@ const router = useRouter();
 const mail = ref("");
 const password = ref("");
 const error = ref("");
+const loading = ref(false);
+const ERROR_MESSAGES: Record<string, string> = {
+  "No active account found with the given credentials":
+    "Email o contraseña incorrectos.",
+};
 
 async function handleLogin() {
   error.value = "";
+  loading.value = true;
   try {
     await auth.login(mail.value, password.value);
     router.push("/");
   } catch (e: any) {
-    error.value = e.message;
+    error.value =
+      ERROR_MESSAGES[e.message] ??
+      "Error al iniciar sesión. Inténtalo de nuevo.";
+  } finally {
+    loading.value = false;
   }
 }
 </script>
@@ -50,7 +60,9 @@ async function handleLogin() {
 
       <p v-if="error" class="error">{{ error }}</p>
 
-      <button type="submit">Entrar</button>
+      <button type="submit" :disabled="loading">
+        {{ loading ? "Entrando..." : "Entrar" }}
+      </button>
 
       <p class="auth-link-row">
         No estás registrado?
@@ -111,6 +123,10 @@ button {
   cursor: pointer;
   font-size: 0.95rem;
   transition: background 0.2s;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 button:hover {
   background: rgba(247, 241, 232, 0.1);

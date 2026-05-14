@@ -15,15 +15,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from synthgrooveApp.views import (
     ArtistaListCreateAPI, ArtistaDetailAPI,
     EventoListCreateAPI, EventoDetailAPI,
-    ProductoListCreateAPI, ProductoDetailAPI,RegisterAPIView, LoginAPIView, LogoutAPIView
+    ProductoListCreateAPI, ProductoDetailAPI, RegisterAPIView, LoginAPIView, LogoutAPIView
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.conf import settings
-from django.conf.urls.static import static
+from django.views.static import serve
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -41,5 +41,6 @@ urlpatterns = [
     path("api/auth/login/", LoginAPIView.as_view(), name="api_login"),
     path("api/auth/logout/", LogoutAPIView.as_view(), name="api_logout"),
     path("api/auth/refresh/", TokenRefreshView.as_view(), name="api_token_refresh"),
+
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
