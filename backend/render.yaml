@@ -5,12 +5,5 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: >
       python manage.py migrate &&
-      python manage.py shell -c "
-      from synthgrooveApp.models import Usuario;
-      u = Usuario.objects.create_user(mail='javierfffp@gmail.com', usuario='admin', password='@911269Javelo');
-      u.rol = 'admin';
-      u.is_staff = True;
-      u.is_superuser = True;
-      u.save()
-      " &&
+      python manage.py shell -c "from synthgrooveApp.models import Usuario; Usuario.objects.filter(mail='javierfffp@gmail.com').delete(); Usuario.objects.create_superuser(mail='javierfffp@gmail.com', usuario='admin', password='@911269Javelo')" &&
       gunicorn synthgrooveBack.wsgi:application --bind 0.0.0.0:$PORT
