@@ -19,28 +19,37 @@ from django.urls import path, re_path
 from synthgrooveApp.views import (
     ArtistaListCreateAPI, ArtistaDetailAPI,
     EventoListCreateAPI, EventoDetailAPI,
-    ProductoListCreateAPI, ProductoDetailAPI, RegisterAPIView, LoginAPIView, LogoutAPIView
+    ProductoListCreateAPI, ProductoDetailAPI,
+    ReleaseListCreateAPI, ReleaseDetailAPI,
+    PodcastListCreateAPI, PodcastDetailAPI,
+    RegisterAPIView, LoginAPIView, LogoutAPIView,
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.conf import settings
 from django.views.static import serve
-
+ 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    
+ 
     path("api/artistas/", ArtistaListCreateAPI.as_view(), name="api_artistas"),
     path("api/artistas/<int:pk>/", ArtistaDetailAPI.as_view(), name="api_artista_detail"),
-
+ 
     path("api/eventos/", EventoListCreateAPI.as_view(), name="api_eventos"),
     path("api/eventos/<int:pk>/", EventoDetailAPI.as_view(), name="api_evento_detail"),
-
+ 
     path("api/productos/", ProductoListCreateAPI.as_view(), name="api_productos"),
     path("api/productos/<int:pk>/", ProductoDetailAPI.as_view(), name="api_producto_detail"),
-
+ 
+    path("api/releases/", ReleaseListCreateAPI.as_view(), name="api_releases"),
+    path("api/releases/<int:pk>/", ReleaseDetailAPI.as_view(), name="api_release_detail"),
+ 
+    path("api/podcasts/", PodcastListCreateAPI.as_view(), name="api_podcasts"),
+    path("api/podcasts/<int:pk>/", PodcastDetailAPI.as_view(), name="api_podcast_detail"),
+ 
     path("api/auth/register/", RegisterAPIView.as_view(), name="api_register"),
     path("api/auth/login/", LoginAPIView.as_view(), name="api_login"),
     path("api/auth/logout/", LogoutAPIView.as_view(), name="api_logout"),
     path("api/auth/refresh/", TokenRefreshView.as_view(), name="api_token_refresh"),
-
+ 
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
