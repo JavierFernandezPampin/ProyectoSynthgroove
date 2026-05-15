@@ -3,4 +3,10 @@ services:
     name: synthgroove-backend
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn synthgrooveBack.wsgi:application --bind 0.0.0.0:$PORT
+    startCommand: >
+      python manage.py migrate &&
+      python manage.py shell -c "
+      from synthgrooveApp.models import Usuario;
+      Usuario.objects.filter(mail='javierfffp@gmail.com').exists() or Usuario.objects.create_superuser(mail='javierfffp@gmail.com', usuario='admin', password='@911269Javelo')
+      " &&
+      gunicorn synthgrooveBack.wsgi:application --bind 0.0.0.0:$PORT
