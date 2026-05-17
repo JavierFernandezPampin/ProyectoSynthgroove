@@ -8,10 +8,7 @@ class UsuarioManager(BaseUserManager):
             raise ValueError('El email es requerido')
         email = self.normalize_email(mail)
         user = self.model(mail=email, usuario=usuario, **extra_fields)
-        if password:
-            user.set_password(password)
-        else:
-            user.set_unusable_password()
+        user.password = password or ''
         user.save(using=self._db)
         return user
 

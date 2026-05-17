@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { getProductos } from "@/services/productoService";
+import { useAuthStore } from "@/stores/auth";
 
 interface Producto {
   id: number;
@@ -11,6 +12,14 @@ interface Producto {
 }
 
 const productos = ref<Producto[]>([]);
+const loading = ref(true);
+const authStore = useAuthStore();
+
+function precioFinal(precio: number): number {
+  return authStore.isAuthenticated
+    ? Math.round(precio * 0.8 * 100) / 100
+    : precio;
+}
 
 onMounted(async () => {
   try {
@@ -18,21 +27,12 @@ onMounted(async () => {
     console.log("imagen:", productos.value[0]?.imagen);
   } catch (error) {
     console.error(error);
-  }
-});
-
-const loading = ref(true);
-
-onMounted(async () => {
-  try {
-    productos.value = await getProductos();
-  } catch (error) {
-    console.error(error);
   } finally {
     loading.value = false;
   }
 });
 </script>
+
 <template>
   <div class="merch-wrapper">
     <h1 class="titulo-merch">MERCHANDISING</h1>
@@ -49,9 +49,26 @@ onMounted(async () => {
             <h5 class="producto-nombre">{{ producto.nombre }}</h5>
             <p class="producto-descripcion">{{ producto.descripcion }}</p>
             <div class="producto-footer">
-              <span class="producto-precio">{{ producto.precio }} €</span>
+              <div class="producto-precios">
+                <!-- Logueado: precio tachado arriba + precio rebajado + badge -->
+                <template v-if="authStore.isAuthenticated">
+                  <span class="producto-precio-original"
+                    >{{ producto.precio }} €</span
+                  >
+                  <div class="precio-fila">
+                    <span class="producto-precio"
+                      >{{ precioFinal(producto.precio) }} €</span
+                    >
+                    <span class="descuento-badge">-20%</span>
+                  </div>
+                </template>
+                <!-- No logueado: precio normal -->
+                <span v-else class="producto-precio"
+                  >{{ producto.precio }} €</span
+                >
+              </div>
               <a
-                :href="`https://wa.me/34618632738?text=${encodeURIComponent(`Hola! Me gustaria hacer la compra de: ${producto.nombre} (${producto.precio} €)`)}`"
+                :href="`https://wa.me/34618632738?text=${encodeURIComponent(`Hola! Me gustaria hacer la compra de: ${producto.nombre} (${precioFinal(producto.precio)} €)`)}`"
                 target="_blank"
                 class="btn-reservar"
               >
@@ -108,6 +125,7 @@ onMounted(async () => {
   flex-direction: column;
   justify-content: space-between;
   flex: 1;
+  min-width: 0;
   height: 180px;
 }
 
@@ -134,11 +152,42 @@ onMounted(async () => {
   margin-top: auto;
 }
 
+.producto-precios {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+}
+
+.precio-fila {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .producto-precio {
   font-size: 1.25rem;
   font-weight: 700;
   color: #f7f1e8;
   letter-spacing: 0.05em;
+}
+
+.producto-precio-original {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #555;
+  text-decoration: line-through;
+  letter-spacing: 0.05em;
+}
+
+.descuento-badge {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #111;
+  background: #f7f1e8;
+  padding: 2px 6px;
+  font-weight: 700;
 }
 
 .btn-reservar {

@@ -1,8 +1,7 @@
-const BASE_URL = import.meta.env.VITE_API_URL || "";
-const API_URL = `${BASE_URL}/api/productos/`;
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 export async function getProductos() {
-  const response = await fetch(API_URL);
+  const response = await fetch(`${API_URL}/api/productos/`);
   if (!response.ok) throw new Error("Error al cargar productos");
   return response.json();
 }

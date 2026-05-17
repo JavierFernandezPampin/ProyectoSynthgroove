@@ -5,3 +5,32 @@ node_modules/
 /package-lock.json
 backend/venv/
 frontend/synthgrooveFront/dist/
+
+# Environment variables (solo ignorar en producción)
+# .env
+# .env.local
+# .env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Django
+db.sqlite3
+/media/
+/staticfiles/
+*.egg-info/
+dist/
+build/
+
+# Frontend
+/frontend/synthgrooveFront/node_modules/
+/frontend/synthgrooveFront/.env
+/frontend/synthgrooveFront/.env.local
+

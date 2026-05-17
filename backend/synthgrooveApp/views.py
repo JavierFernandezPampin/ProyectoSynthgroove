@@ -1,11 +1,6 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
-from django.views import View
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.views.generic.edit import CreateView, FormView
 
 from rest_framework import generics, permissions
 
@@ -17,8 +12,6 @@ from .serializers import (
     ReleaseSerializer,
     PodcastSerializer
 )
-
-from .forms import RegistroForm, LoginForm
 
 # Create your views here.
 
@@ -41,25 +34,15 @@ class ArtistaListCreateAPI(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user)
 
-class ArtistaDetailAPI(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Artista.objects.all()
-    serializer_class = ArtistaSerializer
-    permission_classes = [EsGestorOAdmin]
-
 
 #release
 class ReleaseListCreateAPI(generics.ListCreateAPIView):
     queryset = Release.objects.all()
     serializer_class = ReleaseSerializer
-    permission_classes = [EsGestorOAdmin]
+    permission_classes = [EsGestorOAdmin] 
 
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user)
-
-class ReleaseDetailAPI(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Release.objects.all()
-    serializer_class = ReleaseSerializer
-    permission_classes = [EsGestorOAdmin]
 
 
 #podctast
@@ -70,11 +53,6 @@ class PodcastListCreateAPI(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user)
-
-class PodcastDetailAPI(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Podcast.objects.all()
-    serializer_class = PodcastSerializer
-    permission_classes = [EsGestorOAdmin]
 
 
 #eventos
@@ -150,7 +128,7 @@ class LoginAPIView(APIView):
         except Usuario.DoesNotExist:
             return Response({"error": "Credenciales incorrectas."}, status=401)
 
-        if not user.check_password(password):
+        if user.password != password:
             return Response({"error": "Credenciales incorrectas."}, status=401)
 
         refresh = RefreshToken.for_user(user)

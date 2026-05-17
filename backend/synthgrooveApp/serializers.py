@@ -53,8 +53,7 @@ class ProductoSerializer(serializers.ModelSerializer):
 
     def get_imagen(self, obj):
         if obj.imagen:
-            backend_url = os.environ.get('BACKEND_URL', 'http://localhost:8000')
-            return f"{backend_url}/media/{obj.imagen}"
+            return obj.imagen.url
         return None
 
     class Meta:
@@ -68,8 +67,7 @@ class ArtistaSerializer(serializers.ModelSerializer):
 
     def get_imagen(self, obj):
         if obj.imagen:
-            backend_url = os.environ.get('BACKEND_URL', 'http://localhost:8000')
-            return f"{backend_url}/media/{obj.imagen}"
+            return obj.imagen.url
         return None
 
     class Meta:
