@@ -29,7 +29,6 @@ class UsuarioSerializer(serializers.ModelSerializer):
         return instance
 
 
-
 class ReleaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Release
@@ -41,12 +40,17 @@ class PodcastSerializer(serializers.ModelSerializer):
         model = Podcast
         fields = "__all__"
 
-
 class EventoSerializer(serializers.ModelSerializer):
+    imagen = serializers.SerializerMethodField()
+
+    def get_imagen(self, obj):
+        if obj.imagen:
+            return obj.imagen.url
+        return None
+
     class Meta:
         model = Evento
         fields = "__all__"
-
 
 class ProductoSerializer(serializers.ModelSerializer):
     imagen = serializers.SerializerMethodField()
@@ -73,6 +77,8 @@ class ArtistaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Artista
         fields = "__all__"
+
+    
 class PedidoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pedido
