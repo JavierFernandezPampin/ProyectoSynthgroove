@@ -47,7 +47,8 @@ class EventoSerializer(serializers.ModelSerializer):
 
     def get_imagen(self, obj):
         if obj.imagen:
-            return cloudinary.utils.cloudinary_url(str(obj.imagen))[0]
+            url = cloudinary.utils.cloudinary_url(str(obj.imagen))[0]
+            return url.replace("http://", "https://")
         return None
 
     class Meta:
@@ -59,7 +60,8 @@ class ProductoSerializer(serializers.ModelSerializer):
 
     def get_imagen(self, obj):
         if obj.imagen:
-            return cloudinary.utils.cloudinary_url(str(obj.imagen))[0]
+            url = cloudinary.utils.cloudinary_url(str(obj.imagen))[0]
+            return url.replace("http://", "https://")   
         return None
 
     class Meta:
@@ -73,7 +75,8 @@ class ArtistaSerializer(serializers.ModelSerializer):
 
     def get_imagen(self, obj):
         if obj.imagen:
-            return cloudinary.utils.cloudinary_url(str(obj.imagen))[0]
+            url = cloudinary.utils.cloudinary_url(str(obj.imagen))[0]
+            return url.replace("http://", "https://")
         return None
 
     class Meta:
