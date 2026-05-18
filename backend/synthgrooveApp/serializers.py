@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Artista, Release, Podcast, Evento, Producto, Usuario, Pedido
 import os
+import cloudinary
 
 #el serializer sirve para convertir los datos a json y poder leerlos en la web y viceversa
 class UsuarioSerializer(serializers.ModelSerializer):
@@ -40,12 +41,13 @@ class PodcastSerializer(serializers.ModelSerializer):
         model = Podcast
         fields = "__all__"
 
+
 class EventoSerializer(serializers.ModelSerializer):
     imagen = serializers.SerializerMethodField()
 
     def get_imagen(self, obj):
         if obj.imagen:
-            return obj.imagen.url
+            return cloudinary.utils.cloudinary_url(str(obj.imagen))[0]
         return None
 
     class Meta:
@@ -57,7 +59,7 @@ class ProductoSerializer(serializers.ModelSerializer):
 
     def get_imagen(self, obj):
         if obj.imagen:
-            return obj.imagen.url
+            return cloudinary.utils.cloudinary_url(str(obj.imagen))[0]
         return None
 
     class Meta:
@@ -71,7 +73,7 @@ class ArtistaSerializer(serializers.ModelSerializer):
 
     def get_imagen(self, obj):
         if obj.imagen:
-            return obj.imagen.url
+            return cloudinary.utils.cloudinary_url(str(obj.imagen))[0]
         return None
 
     class Meta:
