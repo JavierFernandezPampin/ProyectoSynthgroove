@@ -6,4 +6,4 @@ djangorestframework-simplejwt
 gunicorn
 django-cors-headers
 cloudinary
-django-cloudinary-storage
+django-cloudinary-storagedjango-cloudinary-storage
