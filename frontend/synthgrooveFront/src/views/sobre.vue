@@ -23,16 +23,6 @@ onMounted(async () => {
     loading.value = false;
   }
 });
-
-// Cogemos la URL base de las variables de entorno, si no existe usamos cadena vacía
-const BASE_URL = import.meta.env.VITE_API_URL || "";
-
-// El backend devuelve las imágenes con una URL interna de Docker (backend:8000)
-// que el navegador no entiende, así que la cambiamos por localhost:8000
-function fixImageUrl(url: string | null): string {
-  if (!url) return "";
-  return url.replace("http://backend:8000", BASE_URL);
-}
 </script>
 
 <template>
