@@ -1,14 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
-# Manager para Usuario personalizado
 class UsuarioManager(BaseUserManager):
     def create_user(self, mail, usuario, password=None, **extra_fields):
         if not mail:
             raise ValueError('El email es requerido')
         email = self.normalize_email(mail)
         user = self.model(mail=email, usuario=usuario, **extra_fields)
-        user.password = password or ''
+        if password:
+            user.set_password(password)
+        else:
+            user.set_unusable_password()
         user.save(using=self._db)
         return user
 
@@ -18,8 +20,21 @@ class UsuarioManager(BaseUserManager):
         extra_fields.setdefault('rol', 'admin')
         return self.create_user(mail, usuario, password, **extra_fields)
 
+    def authenticate(self, mail, password):
 
-# Create your models here.
+        if not mail or password is None:
+            return None
+        email = self.normalize_email(mail)
+        try:
+            user = self.get(mail=email)
+        except self.model.DoesNotExist:
+            return None
+
+        if user.check_password(password):
+            return user
+        return None
+
+
 class Usuario(AbstractBaseUser, PermissionsMixin):
     ROLE_CHOICES = [
         ("gestor", "Gestor"),

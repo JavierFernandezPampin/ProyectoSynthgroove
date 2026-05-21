@@ -123,12 +123,8 @@ class LoginAPIView(APIView):
         mail = request.data.get("mail")
         password = request.data.get("password")
 
-        try:
-            user = Usuario.objects.get(mail=mail)
-        except Usuario.DoesNotExist:
-            return Response({"error": "Credenciales incorrectas."}, status=401)
-
-        if user.password != password:
+        user = Usuario.objects.authenticate(mail, password)
+        if not user:
             return Response({"error": "Credenciales incorrectas."}, status=401)
 
         refresh = RefreshToken.for_user(user)
