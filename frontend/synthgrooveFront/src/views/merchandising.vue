@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from "vue";
 import { getProductos } from "@/services/productoService";
 import { useAuthStore } from "@/stores/auth";
+import { iniciarPago } from "@/services/pagoService";
 
 interface Producto {
   id: number;
@@ -31,6 +32,20 @@ onMounted(async () => {
     loading.value = false;
   }
 });
+
+const pagandoId = ref<number | null>(null);
+
+async function comprar(producto: Producto) {
+  pagandoId.value = producto.id;
+  try {
+    await iniciarPago("producto", producto.id, 1);
+  } catch (err) {
+    console.error(err);
+    alert("Error al iniciar el pago. Inténtalo de nuevo.");
+  } finally {
+    pagandoId.value = null;
+  }
+}
 </script>
 
 <template>
@@ -50,7 +65,6 @@ onMounted(async () => {
             <p class="producto-descripcion">{{ producto.descripcion }}</p>
             <div class="producto-footer">
               <div class="producto-precios">
-                <!-- Logueado: precio tachado arriba + precio rebajado + badge -->
                 <template v-if="authStore.isAuthenticated">
                   <span class="producto-precio-original"
                     >{{ producto.precio }} €</span
@@ -62,18 +76,19 @@ onMounted(async () => {
                     <span class="descuento-badge">-20%</span>
                   </div>
                 </template>
-                <!-- No logueado: precio normal -->
                 <span v-else class="producto-precio"
                   >{{ producto.precio }} €</span
                 >
               </div>
-              <a
-                :href="`https://wa.me/34618632738?text=${encodeURIComponent(`Hola! Me gustaria hacer la compra de: ${producto.nombre} (${precioFinal(producto.precio)} €)`)}`"
-                target="_blank"
+              <button
                 class="btn-reservar"
+                :disabled="pagandoId === producto.id"
+                @click="comprar(producto)"
               >
-                Reservar →
-              </a>
+                {{
+                  pagandoId === producto.id ? "Redirigiendo..." : "Comprar →"
+                }}
+              </button>
             </div>
           </div>
         </div>
@@ -201,6 +216,11 @@ onMounted(async () => {
   transition:
     color 0.2s,
     border-color 0.2s;
+
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .btn-reservar:hover {

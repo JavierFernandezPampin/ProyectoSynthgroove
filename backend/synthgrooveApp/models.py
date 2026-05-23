@@ -102,16 +102,19 @@ class Podcast(models.Model):
         return self.title
 
 
+
 class Evento(models.Model):
     nombre = models.CharField(max_length=150)
     localizacion = models.CharField(max_length=200)
     fecha_release = models.DateField(null=True, blank=True)
     imagen = models.ImageField(upload_to="eventos/", blank=True, null=True)
+    precio = models.DecimalField(max_digits=8, decimal_places=2, default=0)
 
     usuario = models.ForeignKey(Usuario,on_delete=models.SET_NULL,null=True,blank=True,related_name="eventos")
 
     def __str__(self):
         return self.nombre
+
 
 
 class Producto(models.Model):
@@ -142,3 +145,19 @@ class Pedido(models.Model):
 
     def __str__(self):
         return f"Pedido {self.id} - {self.usuario.usuario}"
+
+
+# Modelo para registrar pagos de Stripe
+class Pago(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True, blank=True, related_name="pagos")
+    producto = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True, blank=True, related_name="pagos")
+    evento = models.ForeignKey(Evento, on_delete=models.SET_NULL, null=True, blank=True, related_name="pagos")
+    
+    cantidad = models.IntegerField(default=1)
+    monto = models.DecimalField(max_digits=8, decimal_places=2)
+    stripe_session_id = models.CharField(max_length=255, blank=True, null=True)
+    pagado = models.BooleanField(default=False)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Pago {self.id} - {self.usuario} - {self.monto}€"

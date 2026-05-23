@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Artista, Release, Podcast, Evento, Producto, Usuario, Pedido
-import os
 import cloudinary
 
 #el serializer sirve para convertir los datos a json y poder leerlos en la web y viceversa

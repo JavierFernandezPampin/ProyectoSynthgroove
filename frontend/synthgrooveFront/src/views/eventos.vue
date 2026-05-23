@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from "vue";
 import { getEventos } from "@/services/eventosService";
 import { useAuthStore } from "@/stores/auth";
+import { iniciarPago } from "@/services/pagoService";
 
 interface Evento {
   id: number;
@@ -82,6 +83,20 @@ onMounted(async () => {
     loading.value = false;
   }
 });
+
+const pagandoId = ref<number | null>(null);
+
+async function reservarEvento(evento: Evento) {
+  pagandoId.value = evento.id;
+  try {
+    await iniciarPago("evento", evento.id, 1);
+  } catch (err) {
+    console.error(err);
+    alert("Error al iniciar el pago.");
+  } finally {
+    pagandoId.value = null;
+  }
+}
 </script>
 
 <template>
@@ -178,14 +193,14 @@ onMounted(async () => {
           <div class="evento-actions">
             <template v-if="seccionActiva === 'proximos'">
               <!-- Usuario logueado → enlace normal -->
-              <router-link
+              <button
                 v-if="authStore.isAuthenticated"
-                to="/reservar"
                 class="btn-reservar"
+                :disabled="pagandoId === evento.id"
+                @click="reservarEvento(evento)"
               >
-                Reservar
-              </router-link>
-
+                {{ pagandoId === evento.id ? "..." : "Reservar" }}
+              </button>
               <!-- No logueado → enlace a login -->
               <router-link v-else to="/login" class="btn-login-hint">
                 Inicia sesión para reservar

@@ -1,9 +1,10 @@
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from rest_framework import generics, permissions
-
+from django.conf import settings
+import stripe
 from .models import Artista, Evento, Producto, Release, Podcast, Usuario
 from .serializers import (
     ArtistaSerializer,
@@ -12,7 +13,6 @@ from .serializers import (
     ReleaseSerializer,
     PodcastSerializer
 )
-
 # Create your views here.
 
 #controla quien puede acceder a una vista
@@ -148,3 +148,47 @@ class LogoutAPIView(APIView):
             return Response({"message": "Sesión cerrada correctamente."})
         except Exception:
             return Response({"error": "Token inválido."}, status=400)
+        
+
+
+#pago stripe
+class PagoStripeAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        tipo = request.data.get('tipo') 
+        obj_id = request.data.get('id')
+        cantidad = int(request.data.get('cantidad', 1))
+
+        if tipo == 'producto':
+            from .models import Producto
+            obj = Producto.objects.filter(id=obj_id).first()
+        elif tipo == 'evento':
+            from .models import Evento
+            obj = Evento.objects.filter(id=obj_id).first()
+        else:
+            return Response({'error': 'Tipo inválido'}, status=400)
+        if not obj:
+            return Response({'error': 'No encontrado'}, status=404)
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        
+        try:
+            session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[{
+                    'price_data': {
+                        'currency': 'eur',
+                        'product_data': {
+                            'name': getattr(obj, 'nombre', str(obj)),
+                        },
+                        'unit_amount': int(obj.precio * 100),
+                    },
+                    'quantity': cantidad,
+                }],
+                mode='payment',
+                success_url=request.build_absolute_uri('/') + '?success=true',
+                cancel_url=request.build_absolute_uri('/') + '?canceled=true',
+            )
+            return Response({'checkout_url': session.url})
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)
