@@ -4,8 +4,9 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, permissions
 from django.conf import settings
+from django.core.mail import send_mail
 import stripe
-from .models import Artista, Evento, Producto, Release, Podcast, Usuario
+from .models import Artista, Evento, Producto, Release, Podcast, Usuario, Pago
 from .serializers import (
     ArtistaSerializer,
     EventoSerializer,
@@ -153,7 +154,7 @@ class LogoutAPIView(APIView):
 
 #pago stripe
 class PagoStripeAPIView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
         tipo = request.data.get('tipo') 
@@ -161,18 +162,19 @@ class PagoStripeAPIView(APIView):
         cantidad = int(request.data.get('cantidad', 1))
 
         if tipo == 'producto':
-            from .models import Producto
             obj = Producto.objects.filter(id=obj_id).first()
         elif tipo == 'evento':
-            from .models import Evento
             obj = Evento.objects.filter(id=obj_id).first()
         else:
             return Response({'error': 'Tipo inválido'}, status=400)
         if not obj:
             return Response({'error': 'No encontrado'}, status=404)
+        
         stripe.api_key = settings.STRIPE_SECRET_KEY
+        monto = obj.precio * cantidad
         
         try:
+            frontend_url = settings.FRONTEND_URL
             session = stripe.checkout.Session.create(
                 payment_method_types=['card'],
                 line_items=[{
@@ -186,9 +188,47 @@ class PagoStripeAPIView(APIView):
                     'quantity': cantidad,
                 }],
                 mode='payment',
-                success_url=request.build_absolute_uri('/') + '?success=true',
-                cancel_url=request.build_absolute_uri('/') + '?canceled=true',
+                success_url=f'{frontend_url}/compra-exitosa?session_id={{CHECKOUT_SESSION_ID}}',
+                cancel_url=f'{frontend_url}/compra-cancelada',
             )
+            
+            # Guardar pago en BD
+            pago = Pago.objects.create(
+                usuario=request.user,
+                producto=obj if tipo == 'producto' else None,
+                evento=obj if tipo == 'evento' else None,
+                cantidad=cantidad,
+                monto=monto,
+                stripe_session_id=session.id,
+                pagado=False
+            )
+            
+            # Enviar email de confirmación
+            try:
+                asunto = 'Confirmación de compra - SynthGroove'
+                mensaje = f'''Hola {request.user.usuario},
+
+Tu pedido ha sido creado. Detalles:
+
+Producto: {getattr(obj, 'nombre', str(obj))}
+Cantidad: {cantidad}
+Monto: €{monto:.2f}
+
+Espera a que redirijamos a Stripe para completar el pago.
+
+¡Gracias por tu compra!
+
+SynthGroove'''
+                send_mail(
+                    asunto,
+                    mensaje,
+                    'noreply@synthgroove.es',
+                    [request.user.mail],
+                    fail_silently=True
+                )
+            except Exception as email_error:
+                print(f'Error enviando email: {email_error}')
+            
             return Response({'checkout_url': session.url})
         except Exception as e:
             return Response({'error': str(e)}, status=500)

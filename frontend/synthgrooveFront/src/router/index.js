@@ -14,6 +14,14 @@ const router = createRouter({
     { path: "/sobre", component: () => import("@/views/sobre.vue") },
     { path: "/login", component: () => import("@/components/Login.vue") },
     { path: "/registro", component: () => import("@/components/Register.vue") },
+    {
+      path: "/compra-exitosa",
+      component: () => import("@/views/compra-exitosa.vue"),
+    },
+    {
+      path: "/compra-cancelada",
+      component: () => import("@/views/compra-cancelada.vue"),
+    },
   ],
 });
 

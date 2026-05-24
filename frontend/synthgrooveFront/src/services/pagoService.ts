@@ -7,7 +7,7 @@ export async function iniciarPago(
 ): Promise<void> {
   const token = localStorage.getItem("token");
 
-  const response = await fetch(`${API_BASE}/api/pago-stripe/`, {
+  const response = await fetch(`${API_BASE}/api/pago/stripe/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
