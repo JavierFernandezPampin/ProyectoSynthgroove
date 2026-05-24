@@ -23,7 +23,9 @@ import Footer from "@/components/Footer.vue";
 
 .app-content {
   flex: 1;
+  display: flex;
   min-width: 0;
+  min-height: 0;
   background: #000;
 }
 </style>

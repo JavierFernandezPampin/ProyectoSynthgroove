@@ -23,22 +23,28 @@
 </template>
 <style scoped>
 .home-shell {
+  flex: 1;
+  display: flex;
   background: black;
-  min-height: 100vh;
+  min-height: 0;
   font-family: "Space Grotesk", "Avenir Next", "Trebuchet MS", sans-serif;
 }
 
 .home-main {
-  padding: 0 0 3rem;
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  padding: 0;
 }
 
 .hero {
+  flex: 1;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: clamp(34rem, 76vh, 52rem);
+  min-height: 0;
   margin-inline: auto;
   margin-top: 0;
   overflow: hidden;
@@ -85,10 +91,6 @@
 }
 
 @media (max-width: 720px) {
-  .hero {
-    min-height: 64vh;
-  }
-
   .hero-title {
     padding: 1.5rem;
     letter-spacing: 0.05em;
