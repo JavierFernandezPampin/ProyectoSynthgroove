@@ -116,6 +116,7 @@ onMounted(async () => {
   max-width: 900px;
   margin: 0 auto;
   padding: 3rem 1.5rem;
+  background: #000;
 }
 
 .titulo-sobre,
@@ -207,13 +208,40 @@ onMounted(async () => {
   color: #f7f1e8;
 }
 
+@media (max-width: 820px) {
+  .sobre-wrapper {
+    padding: 2rem 1rem 3rem;
+  }
+
+  .descripcion {
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .artista-card {
+    gap: 1.5rem;
+  }
+
+  .artista-img {
+    width: 200px;
+    height: 200px;
+  }
+}
+
 @media (max-width: 600px) {
   .artista-card {
     flex-direction: column;
+    gap: 1rem;
   }
+
   .artista-img {
     width: 100%;
     height: 240px;
+  }
+
+  .artista-links {
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 }
 

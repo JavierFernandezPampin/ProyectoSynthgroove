@@ -77,10 +77,13 @@ async function handleLogin() {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background: #121212;
+  min-height: 70vh;
+  width: 100%;
+  padding: 2rem 1rem 3rem;
+  background: #000;
   font-family: "Space Grotesk", "Avenir Next", "Trebuchet MS", sans-serif;
 }
+
 .login-form {
   display: flex;
   flex-direction: column;
@@ -89,6 +92,7 @@ async function handleLogin() {
   padding: 2rem;
   background: #1a1a1a;
   border: 1px solid #333;
+  border-radius: 12px;
 }
 .login-form h2 {
   color: #f7f1e8;
@@ -149,5 +153,19 @@ button:hover {
 }
 .auth-link:hover {
   color: rgba(247, 241, 232, 0.8);
+}
+
+@media (max-width: 480px) {
+  .login-wrapper {
+    padding-inline: 0.85rem;
+  }
+
+  .login-form {
+    padding: 1.4rem;
+  }
+
+  .auth-link-row {
+    line-height: 1.6;
+  }
 }
 </style>

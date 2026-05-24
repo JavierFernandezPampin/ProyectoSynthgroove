@@ -30,8 +30,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  min-height: 70vh;
+  width: 100%;
+  padding: 2rem 0 3rem;
+  background: #000;
 }
 
 .container {
@@ -131,6 +133,27 @@ h1 {
 
   .actions {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 420px) {
+  .container {
+    padding: 16px;
+  }
+
+  .icon {
+    width: 64px;
+    height: 64px;
+    line-height: 64px;
+    font-size: 42px;
+  }
+
+  .mensaje {
+    padding: 16px;
+  }
+
+  .btn {
+    width: 100%;
   }
 }
 </style>

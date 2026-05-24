@@ -102,6 +102,7 @@ async function comprar(producto: Producto) {
   max-width: 960px;
   margin: 0 auto;
   padding: 3rem 1.5rem;
+  background: #000;
 }
 
 .titulo-merch {
@@ -150,6 +151,7 @@ async function comprar(producto: Producto) {
   text-transform: uppercase;
   color: #f7f1e8;
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .producto-descripcion {
@@ -205,6 +207,9 @@ async function comprar(producto: Producto) {
 }
 
 .btn-reservar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 0.75rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -246,6 +251,57 @@ async function comprar(producto: Producto) {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 900px) {
+  .producto-card {
+    gap: 1.25rem;
+  }
+
+  .producto-info {
+    height: auto;
+    min-height: 180px;
+  }
+}
+
+@media (max-width: 680px) {
+  .merch-wrapper {
+    padding: 2rem 1rem 3rem;
+  }
+
+  .producto-card {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem 0;
+  }
+
+  .producto-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .producto-info {
+    gap: 1rem;
+    min-height: 0;
+  }
+
+  .producto-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .precio-fila {
+    flex-wrap: wrap;
+  }
+
+  .btn-reservar {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 1px solid #f7f1e8;
+    border-bottom-width: 1px;
   }
 }
 </style>

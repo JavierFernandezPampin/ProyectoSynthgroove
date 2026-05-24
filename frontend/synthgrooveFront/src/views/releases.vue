@@ -78,6 +78,7 @@ onMounted(async () => {
   max-width: 760px;
   margin: 0 auto;
   padding: 3rem 1.5rem;
+  background: #000;
 }
 
 .titulo {
@@ -104,6 +105,7 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  gap: 1rem;
 }
 
 .nombre {
@@ -126,6 +128,16 @@ onMounted(async () => {
   margin-bottom: 0.75rem;
 }
 
+.podcast-item p {
+  margin: 0 0 0.65rem;
+  color: #f7f1e8;
+  line-height: 1.5;
+}
+
+.podcast-item iframe {
+  border: 0;
+}
+
 .spinner-wrapper {
   display: flex;
   justify-content: center;
@@ -145,6 +157,25 @@ onMounted(async () => {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .podcasts-wrapper {
+    padding: 2rem 1rem 3rem;
+  }
+
+  .artista-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nombre {
+    font-size: 1.4rem;
+  }
+
+  .count {
+    font-size: 0.68rem;
   }
 }
 </style>

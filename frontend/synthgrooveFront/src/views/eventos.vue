@@ -10,6 +10,7 @@ interface Evento {
   localizacion: string;
   fecha_release: string | null;
   imagen: string | null;
+  precio: number | string;
   usuario: number | null;
 }
 
@@ -17,6 +18,29 @@ const eventos = ref<Evento[]>([]);
 const loading = ref(true);
 const seccionActiva = ref<"proximos" | "pasados">("proximos");
 const authStore = useAuthStore();
+const euroFormatter = new Intl.NumberFormat("es-ES", {
+  style: "currency",
+  currency: "EUR",
+});
+
+function normalizarPrecio(precio: number | string): number {
+  const valor = Number(precio);
+  return Number.isFinite(valor) ? valor : 0;
+}
+
+function precioFinal(precio: number | string): number {
+  const base = normalizarPrecio(precio);
+  return authStore.isAuthenticated ? Math.round(base * 0.8 * 100) / 100 : base;
+}
+
+function tieneDescuento(precio: number | string): boolean {
+  return authStore.isAuthenticated && normalizarPrecio(precio) > 0;
+}
+
+function formatearPrecio(precio: number | string): string {
+  const valor = normalizarPrecio(precio);
+  return valor === 0 ? "Gratis" : euroFormatter.format(valor);
+}
 
 function parseFecha(fechaStr: string | null): Date {
   if (!fechaStr) return new Date(NaN);
@@ -191,21 +215,44 @@ async function reservarEvento(evento: Evento) {
 
           <!-- Reserva -->
           <div class="evento-actions">
-            <template v-if="seccionActiva === 'proximos'">
-              <!-- Usuario logueado → enlace normal -->
-              <button
-                v-if="authStore.isAuthenticated"
-                class="btn-reservar"
-                :disabled="pagandoId === evento.id"
-                @click="reservarEvento(evento)"
-              >
-                {{ pagandoId === evento.id ? "..." : "Reservar" }}
-              </button>
-              <!-- No logueado → enlace a login -->
-              <router-link v-else to="/login" class="btn-login-hint">
-                Inicia sesión para reservar
-              </router-link>
-            </template>
+            <div class="evento-compra">
+              <div class="evento-precios">
+                <template v-if="tieneDescuento(evento.precio)">
+                  <span class="evento-precio-original">
+                    {{ formatearPrecio(evento.precio) }}
+                  </span>
+                  <div class="evento-precio-fila">
+                    <span class="evento-precio">
+                      {{ formatearPrecio(precioFinal(evento.precio)) }}
+                    </span>
+                    <span class="evento-descuento">-20%</span>
+                  </div>
+                </template>
+                <span v-else class="evento-precio">
+                  {{
+                    formatearPrecio(
+                      authStore.isAuthenticated
+                        ? precioFinal(evento.precio)
+                        : evento.precio,
+                    )
+                  }}
+                </span>
+              </div>
+
+              <template v-if="seccionActiva === 'proximos'">
+                <button
+                  v-if="authStore.isAuthenticated"
+                  class="btn-reservar"
+                  :disabled="pagandoId === evento.id"
+                  @click="reservarEvento(evento)"
+                >
+                  {{ pagandoId === evento.id ? "..." : "Reservar" }}
+                </button>
+                <router-link v-else to="/login" class="btn-login-hint">
+                  Inicia sesión para reservar
+                </router-link>
+              </template>
+            </div>
           </div>
         </div>
 
@@ -220,6 +267,7 @@ async function reservarEvento(evento: Evento) {
   max-width: 960px;
   margin: 0 auto;
   padding: 3rem 1.5rem;
+  background: #000;
 }
 
 .titulo-eventos {
@@ -241,6 +289,7 @@ async function reservarEvento(evento: Evento) {
 /* Tabs */
 .tabs-bar {
   display: flex;
+  flex-wrap: wrap;
   border-bottom: 1px solid #222;
   margin-bottom: 0.5rem;
 }
@@ -386,6 +435,57 @@ async function reservarEvento(evento: Evento) {
   justify-content: flex-end;
 }
 
+.evento-compra {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  min-width: 150px;
+}
+
+.evento-actions:empty {
+  display: none;
+}
+
+.evento-precios {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+}
+
+.evento-precio-fila {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.evento-precio {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #f7f1e8;
+}
+
+.evento-precio-original {
+  font-size: 0.82rem;
+  color: #555;
+  letter-spacing: 0.08em;
+  text-decoration: line-through;
+}
+
+.evento-descuento {
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #111;
+  background: #f7f1e8;
+  padding: 2px 6px;
+  font-weight: 700;
+}
+
 .btn-reservar {
   display: inline-flex;
   align-items: center;
@@ -483,20 +583,81 @@ async function reservarEvento(evento: Evento) {
 
 /* Responsive */
 @media (max-width: 600px) {
+  .eventos-wrapper {
+    padding: 2rem 1rem 3rem;
+  }
+
+  .tabs-bar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tab-btn {
+    justify-content: center;
+    padding: 0.9rem 0.75rem;
+  }
+
   .evento-fila {
-    grid-template-columns: 80px 60px 1fr;
+    grid-template-columns: 88px minmax(0, 1fr);
+    grid-template-areas:
+      "image date"
+      "image info"
+      "actions actions";
     gap: 1rem;
     padding: 1.25rem 0;
+    align-items: start;
   }
+
   .evento-img-wrapper {
-    width: 80px;
-    height: 80px;
+    grid-area: image;
+    width: 88px;
+    height: 88px;
   }
+
+  .evento-fecha {
+    grid-area: date;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .evento-info {
+    grid-area: info;
+  }
+
+  .evento-actions {
+    grid-area: actions;
+    justify-content: flex-start;
+    padding-top: 0.25rem;
+  }
+
+  .evento-compra,
+  .evento-precios {
+    align-items: flex-start;
+  }
+
   .evento-dia-num {
     font-size: 2rem;
   }
+
   .evento-titulo {
     font-size: 1rem;
+    white-space: normal;
+  }
+
+  .evento-lugar,
+  .btn-login-hint {
+    white-space: normal;
+  }
+
+  .btn-reservar {
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .tabs-bar {
+    grid-template-columns: 1fr;
   }
 }
 </style>

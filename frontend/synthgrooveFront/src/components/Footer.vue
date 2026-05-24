@@ -142,4 +142,30 @@
   letter-spacing: 0.1em;
   margin: 0;
 }
+
+@media (max-width: 640px) {
+  .footer {
+    padding: 0 1rem 1.75rem;
+  }
+
+  .footer-social {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem 1.25rem;
+  }
+
+  .footer-legal {
+    justify-content: center;
+  }
+
+  .footer-copy {
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .social-link,
+  .legal-link {
+    font-size: 0.68rem;
+  }
+}
 </style>
