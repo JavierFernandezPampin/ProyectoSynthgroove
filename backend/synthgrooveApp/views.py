@@ -152,46 +152,37 @@ class LogoutAPIView(APIView):
         
 
 
-#pago stripefrom decimal import Decimal
-
+#pago stripe
 class PagoStripeAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
+        tipo = request.data.get('tipo') 
+        obj_id = request.data.get('id')
+        cantidad = int(request.data.get('cantidad', 1))
+
+        if tipo == 'producto':
+            obj = Producto.objects.filter(id=obj_id).first()
+        elif tipo == 'evento':
+            obj = Evento.objects.filter(id=obj_id).first()
+        else:
+            return Response({'error': 'Tipo inválido'}, status=400)
+
+        if not obj:
+            return Response({'error': 'No encontrado'}, status=404)
+
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        es_autenticado = request.user.is_authenticated
+        precio_unitario = obj.precio * 0.8 if es_autenticado else obj.precio
+
         try:
-            print("=== INICIO PAGO ===")
-            print("user:", request.user)
-            print("autenticado:", request.user.is_authenticated)
-            print("stripe key:", settings.STRIPE_SECRET_KEY[:10] if settings.STRIPE_SECRET_KEY else "NONE")
-
-            tipo = request.data.get('tipo') 
-            obj_id = request.data.get('id')
-            cantidad = int(request.data.get('cantidad', 1))
-            print("tipo:", tipo, "id:", obj_id, "cantidad:", cantidad)
-
-            if tipo == 'producto':
-                obj = Producto.objects.filter(id=obj_id).first()
-            elif tipo == 'evento':
-                obj = Evento.objects.filter(id=obj_id).first()
-            else:
-                return Response({'error': 'Tipo inválido'}, status=400)
-
-            print("obj:", obj)
-            if not obj:
-                return Response({'error': 'No encontrado'}, status=404)
-
-            stripe.api_key = settings.STRIPE_SECRET_KEY
-            es_autenticado = request.user.is_authenticated
-            precio_unitario = obj.precio * Decimal('0.8') if es_autenticado else obj.precio
-            print("precio_unitario:", precio_unitario)
-
             session = stripe.checkout.Session.create(
                 payment_method_types=['card'],
                 line_items=[{
                     'price_data': {
                         'currency': 'eur',
                         'product_data': {'name': getattr(obj, 'nombre', str(obj))},
-                        'unit_amount': round(float(precio_unitario) * 100),
+                        'unit_amount': int(precio_unitario * 100),
                     },
                     'quantity': cantidad,
                 }],
@@ -199,7 +190,6 @@ class PagoStripeAPIView(APIView):
                 success_url=f'{settings.FRONTEND_URL}/compra-exitosa?session_id={{CHECKOUT_SESSION_ID}}',
                 cancel_url=f'{settings.FRONTEND_URL}/compra-cancelada',
             )
-            print("session creada:", session.id)
 
             Pago.objects.create(
                 usuario=request.user if es_autenticado else None,
@@ -212,9 +202,27 @@ class PagoStripeAPIView(APIView):
             )
 
             return Response({'checkout_url': session.url})
-
         except Exception as e:
-            import traceback
-            print("=== ERROR ===")
-            traceback.print_exc()
             return Response({'error': str(e)}, status=500)
+
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
+
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+        )
+    except (ValueError, stripe.error.SignatureVerificationError):
+        return HttpResponse(status=400)
+
+    if event['type'] == 'checkout.session.completed':
+        session_id = event['data']['object']['id']
+        Pago.objects.filter(stripe_session_id=session_id).update(pagado=True)
+
+    return HttpResponse(status=200)
