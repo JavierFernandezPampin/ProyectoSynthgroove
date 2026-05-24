@@ -5,14 +5,19 @@ export async function iniciarPago(
   id: number,
   cantidad = 1,
 ): Promise<void> {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("access");
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
 
   const response = await fetch(`${API_BASE}/api/pago/stripe/`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
+    headers,
     body: JSON.stringify({ tipo, id, cantidad }),
   });
 
