@@ -5,6 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, permissions
 from django.conf import settings
 from django.core.mail import send_mail
+from decimal import Decimal, ROUND_HALF_UP
 import stripe
 from .models import Artista, Evento, Producto, Release, Podcast, Usuario, Pago
 from .serializers import (
@@ -15,6 +16,10 @@ from .serializers import (
     PodcastSerializer
 )
 # Create your views here.
+
+DESCUENTO_AUTENTICADO = Decimal("0.80")
+CENTIMOS = Decimal("100")
+CENTIMO = Decimal("0.01")
 
 #controla quien puede acceder a una vista
 class EsGestorOAdmin(permissions.BasePermission):
@@ -173,7 +178,16 @@ class PagoStripeAPIView(APIView):
 
         stripe.api_key = settings.STRIPE_SECRET_KEY
         es_autenticado = request.user.is_authenticated
-        precio_unitario = obj.precio * 0.8 if es_autenticado else obj.precio
+        precio_base = obj.precio
+        precio_unitario = (
+            (precio_base * DESCUENTO_AUTENTICADO).quantize(CENTIMO, rounding=ROUND_HALF_UP)
+            if es_autenticado
+            else precio_base
+        )
+        monto_total = precio_unitario * cantidad
+        unit_amount = int(
+            (precio_unitario * CENTIMOS).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+        )
 
         try:
             session = stripe.checkout.Session.create(
@@ -182,7 +196,7 @@ class PagoStripeAPIView(APIView):
                     'price_data': {
                         'currency': 'eur',
                         'product_data': {'name': getattr(obj, 'nombre', str(obj))},
-                        'unit_amount': int(precio_unitario * 100),
+                        'unit_amount': unit_amount,
                     },
                     'quantity': cantidad,
                 }],
@@ -196,7 +210,7 @@ class PagoStripeAPIView(APIView):
                 producto=obj if tipo == 'producto' else None,
                 evento=obj if tipo == 'evento' else None,
                 cantidad=cantidad,
-                monto=precio_unitario * cantidad,
+                monto=monto_total,
                 stripe_session_id=session.id,
                 pagado=False
             )
