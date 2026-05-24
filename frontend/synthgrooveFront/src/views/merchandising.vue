@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { getProductos } from "@/services/productoService";
 import { useAuthStore } from "@/stores/auth";
 import { iniciarPago } from "@/services/pagoService";
@@ -25,7 +25,6 @@ function precioFinal(precio: number): number {
 onMounted(async () => {
   try {
     productos.value = await getProductos();
-    console.log("imagen:", productos.value[0]?.imagen);
   } catch (error) {
     console.error(error);
   } finally {

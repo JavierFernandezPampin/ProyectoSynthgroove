@@ -19,7 +19,7 @@ from django.urls import path, re_path
 from synthgrooveApp.views import (
     ArtistaListCreateAPI,
     EventoListCreateAPI, EventoDetailAPI,
-    ProductoListCreateAPI, ProductoDetailAPI,
+    ProductoListCreateAPI,
     ReleaseListCreateAPI,
     PodcastListCreateAPI,
     RegisterAPIView, LoginAPIView, LogoutAPIView,

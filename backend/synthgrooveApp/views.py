@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, permissions
 from django.conf import settings
-from django.core.mail import send_mail
 from decimal import Decimal, ROUND_HALF_UP
 import stripe
 from .models import Artista, Evento, Producto, Release, Podcast, Usuario, Pago
@@ -85,11 +84,6 @@ class ProductoListCreateAPI(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user)
-
-class ProductoDetailAPI(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Producto.objects.all()
-    serializer_class = ProductoSerializer
-    permission_classes = [EsGestorOAdmin]
 
 
 #login , register ,logout 

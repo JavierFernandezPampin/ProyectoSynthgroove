@@ -24,7 +24,6 @@ const loading = ref(true);
 onMounted(async () => {
   try {
     artistas.value = await getArtistas();
-    console.log(JSON.stringify(artistas.value, null, 2));
   } catch (error) {
     console.error(error);
   } finally {

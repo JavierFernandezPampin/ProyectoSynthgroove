@@ -25,8 +25,6 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
-
 <style scoped>
 .compra-cancelada {
   display: flex;
