@@ -27,7 +27,7 @@ http://localhost:5173/
 ### Innovación: 
 
 ## Prototipo Final
-### Data de entrega: 
+### Data de entrega: 02/06/2026
 ### Funcionalidades implementadas:
 ### Observacións: 
 ### Innovación: 
