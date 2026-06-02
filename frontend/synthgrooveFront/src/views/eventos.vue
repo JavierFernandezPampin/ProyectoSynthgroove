@@ -100,9 +100,8 @@ function getDiaNombre(fechaStr: string | null) {
 
 onMounted(async () => {
   try {
-    eventos.value = await getEventos();
-  } catch (error) {
-    console.error(error);
+    // Usar caché para evitar recargas innecesarias
+    eventos.value = await console.error(error);
   } finally {
     loading.value = false;
   }
