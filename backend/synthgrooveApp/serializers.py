@@ -30,22 +30,12 @@ def get_cloudinary_url(imagen):
 
 
 class ReleaseSerializer(serializers.ModelSerializer):
-    imagen = serializers.SerializerMethodField()
-
-    def get_imagen(self, obj):
-        return get_cloudinary_url(obj.imagen)
-
     class Meta:
         model = Release
         fields = "__all__"
 
 
 class PodcastSerializer(serializers.ModelSerializer):
-    imagen = serializers.SerializerMethodField()
-
-    def get_imagen(self, obj):
-        return get_cloudinary_url(obj.imagen)
-
     class Meta:
         model = Podcast
         fields = "__all__"

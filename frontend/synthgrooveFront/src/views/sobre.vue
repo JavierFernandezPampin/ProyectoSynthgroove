@@ -16,8 +16,9 @@ const loading = ref(true);
 
 onMounted(async () => {
   try {
-    // Usar caché para evitar recargas innecesarias
-    artistas.value = await console.error(error);
+    artistas.value = await getArtistas();
+  } catch (error) {
+    console.error(error);
   } finally {
     loading.value = false;
   }
