@@ -9,7 +9,6 @@ import stripe
 from .models import Artista, Evento, Producto, Release, Podcast, Usuario, Pago
 from .serializers import (
     ArtistaSerializer,
-    ArtistaSerializerBasico,
     EventoSerializer,
     ProductoSerializer,
     ReleaseSerializer,
@@ -33,11 +32,9 @@ class EsGestorOAdmin(permissions.BasePermission):
 
 #artista
 class ArtistaListCreateAPI(generics.ListCreateAPIView):
-    serializer_class = ArtistaSerializerBasico
+    queryset = Artista.objects.all()
+    serializer_class = ArtistaSerializer
     permission_classes = [EsGestorOAdmin]
-
-    def get_queryset(self):
-        return Artista.objects.select_related('usuario').all()
 
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user)
@@ -45,11 +42,9 @@ class ArtistaListCreateAPI(generics.ListCreateAPIView):
 
 #release
 class ReleaseListCreateAPI(generics.ListCreateAPIView):
+    queryset = Release.objects.all()
     serializer_class = ReleaseSerializer
-    permission_classes = [EsGestorOAdmin]
-
-    def get_queryset(self):
-        return Release.objects.select_related('artista', 'usuario').all()
+    permission_classes = [EsGestorOAdmin] 
 
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user)
@@ -57,11 +52,9 @@ class ReleaseListCreateAPI(generics.ListCreateAPIView):
 
 #podctast
 class PodcastListCreateAPI(generics.ListCreateAPIView):
+    queryset = Podcast.objects.all()
     serializer_class = PodcastSerializer
     permission_classes = [EsGestorOAdmin]
-
-    def get_queryset(self):
-        return Podcast.objects.select_related('artista', 'usuario').all()
 
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user)
@@ -69,31 +62,25 @@ class PodcastListCreateAPI(generics.ListCreateAPIView):
 
 #eventos
 class EventoListCreateAPI(generics.ListCreateAPIView):
+    queryset = Evento.objects.all()
     serializer_class = EventoSerializer
     permission_classes = [EsGestorOAdmin]
-
-    def get_queryset(self):
-        return Evento.objects.select_related('usuario').all()
 
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user)
 
 
 class EventoDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Evento.objects.all()
     serializer_class = EventoSerializer
     permission_classes = [EsGestorOAdmin]
-
-    def get_queryset(self):
-        return Evento.objects.select_related('usuario')
 
 
 #productos
 class ProductoListCreateAPI(generics.ListCreateAPIView):
+    queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
     permission_classes = [EsGestorOAdmin]
-
-    def get_queryset(self):
-        return Producto.objects.select_related('usuario').all()
 
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user)
