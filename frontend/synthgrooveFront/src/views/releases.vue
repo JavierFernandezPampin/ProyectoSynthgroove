@@ -1,49 +1,29 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { getReleases } from "@/services/releasesService";
+import { ref, onMounted } from "vue";
 import { getArtistas } from "@/services/artistService";
 
-interface Release {
+interface Podcast {
   id: number;
-  titulo: string;
+  title: string;
   url: string;
-  artista: number;
 }
 
 interface Artista {
   id: number;
   nombre: string;
+  bio: string;
+  instagram: string;
+  soundcloud: string;
   imagen: string;
+  podcasts: Podcast[];
 }
 
-const releases = ref<Release[]>([]);
 const artistas = ref<Artista[]>([]);
 const loading = ref(true);
 
-const releasesPorArtista = computed(() => {
-  const grupos: Record<number, { artista: Artista; releases: Release[] }> = {};
-
-  artistas.value.forEach((artista) => {
-    grupos[artista.id] = { artista, releases: [] };
-  });
-
-  releases.value.forEach((release) => {
-    if (grupos[release.artista]) {
-      grupos[release.artista].releases.push(release);
-    }
-  });
-
-  return Object.values(grupos).filter((g) => g.releases.length > 0);
-});
-
 onMounted(async () => {
   try {
-    const [releasesData, artistasData] = await Promise.all([
-      getReleases(),
-      getArtistas(),
-    ]);
-    releases.value = releasesData;
-    artistas.value = artistasData;
+    artistas.value = await getArtistas();
   } catch (error) {
     console.error(error);
   } finally {
@@ -54,36 +34,35 @@ onMounted(async () => {
 
 <template>
   <div class="podcasts-wrapper">
-    <h1 class="titulo">LATEST RELEASES</h1>
+    <h1 class="titulo">LATEST PODCASTS</h1>
+    <div class="separador"></div>
     <div v-if="loading" class="spinner-wrapper">
       <div class="spinner"></div>
     </div>
     <div v-else>
       <div
-        v-for="grupo in releasesPorArtista"
-        :key="grupo.artista.id"
+        v-for="artista in artistas"
+        :key="artista.nombre"
         class="artista-bloque"
       >
-        <template v-if="grupo.releases.length">
-          <div class="artista-header">
-            <h2 class="nombre">{{ grupo.artista.nombre }}</h2>
-            <span class="count">{{ grupo.releases.length }} releases</span>
-          </div>
-          <div class="separador"></div>
-        </template>
+        <div class="artista-header">
+          <h2 class="nombre">{{ artista.nombre }}</h2>
+          <span class="count">{{ artista.podcasts?.length ?? 0 }} mixes</span>
+        </div>
+        <div class="separador"></div>
 
         <div
-          v-for="release in grupo.releases"
-          :key="release.id"
+          v-for="podcast in artista.podcasts ?? []"
+          :key="podcast.id"
           class="podcast-item"
         >
-          <p>{{ release.titulo }}</p>
+          <p>{{ podcast.title }}</p>
           <iframe
             width="100%"
             height="100"
             scrolling="no"
             frameborder="no"
-            :src="`https://w.soundcloud.com/player/?url=${release.url}&color=%23002363&auto_play=false`"
+            :src="`https://w.soundcloud.com/player/?url=${podcast.url}&color=%23002363&auto_play=false`"
           ></iframe>
         </div>
 
