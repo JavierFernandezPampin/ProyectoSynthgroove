@@ -1,29 +1,49 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { getReleases } from "@/services/releasesService";
 import { getArtistas } from "@/services/artistService";
 
 interface Release {
   id: number;
-  title: string;
+  titulo: string;
   url: string;
+  artista: number;
 }
 
 interface Artista {
   id: number;
   nombre: string;
-  bio: string;
-  instagram: string;
-  soundcloud: string;
   imagen: string;
-  releases: Release[];
 }
 
+const releases = ref<Release[]>([]);
 const artistas = ref<Artista[]>([]);
 const loading = ref(true);
 
+const releasesPorArtista = computed(() => {
+  const grupos: Record<number, { artista: Artista; releases: Release[] }> = {};
+
+  artistas.value.forEach((artista) => {
+    grupos[artista.id] = { artista, releases: [] };
+  });
+
+  releases.value.forEach((release) => {
+    if (grupos[release.artista]) {
+      grupos[release.artista].releases.push(release);
+    }
+  });
+
+  return Object.values(grupos).filter((g) => g.releases.length > 0);
+});
+
 onMounted(async () => {
   try {
-    artistas.value = await getArtistas();
+    const [releasesData, artistasData] = await Promise.all([
+      getReleases(),
+      getArtistas(),
+    ]);
+    releases.value = releasesData;
+    artistas.value = artistasData;
   } catch (error) {
     console.error(error);
   } finally {
@@ -40,24 +60,24 @@ onMounted(async () => {
     </div>
     <div v-else>
       <div
-        v-for="artista in artistas"
-        :key="artista.nombre"
+        v-for="grupo in releasesPorArtista"
+        :key="grupo.artista.id"
         class="artista-bloque"
       >
-        <template v-if="artista.releases?.length">
+        <template v-if="grupo.releases.length">
           <div class="artista-header">
-            <h2 class="nombre">{{ artista.nombre }}</h2>
-            <span class="count">{{ artista.releases.length }} releases</span>
+            <h2 class="nombre">{{ grupo.artista.nombre }}</h2>
+            <span class="count">{{ grupo.releases.length }} releases</span>
           </div>
           <div class="separador"></div>
         </template>
 
         <div
-          v-for="release in artista.releases ?? []"
+          v-for="release in grupo.releases"
           :key="release.id"
           class="podcast-item"
         >
-          <p>{{ release.title }}</p>
+          <p>{{ release.titulo }}</p>
           <iframe
             width="100%"
             height="100"

@@ -1,29 +1,49 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { getPodcasts } from "@/services/podcastsService";
 import { getArtistas } from "@/services/artistService";
 
 interface Podcast {
   id: number;
   title: string;
   url: string;
+  artista: number;
 }
 
 interface Artista {
   id: number;
   nombre: string;
-  bio: string;
-  instagram: string;
-  soundcloud: string;
   imagen: string;
-  podcasts: Podcast[];
 }
 
+const podcasts = ref<Podcast[]>([]);
 const artistas = ref<Artista[]>([]);
 const loading = ref(true);
 
+const podcastsPorArtista = computed(() => {
+  const grupos: Record<number, { artista: Artista; podcasts: Podcast[] }> = {};
+
+  artistas.value.forEach((artista) => {
+    grupos[artista.id] = { artista, podcasts: [] };
+  });
+
+  podcasts.value.forEach((podcast) => {
+    if (grupos[podcast.artista]) {
+      grupos[podcast.artista].podcasts.push(podcast);
+    }
+  });
+
+  return Object.values(grupos).filter((g) => g.podcasts.length > 0);
+});
+
 onMounted(async () => {
   try {
-    artistas.value = await getArtistas();
+    const [podcastsData, artistasData] = await Promise.all([
+      getPodcasts(),
+      getArtistas(),
+    ]);
+    podcasts.value = podcastsData;
+    artistas.value = artistasData;
   } catch (error) {
     console.error(error);
   } finally {
@@ -41,18 +61,18 @@ onMounted(async () => {
     </div>
     <div v-else>
       <div
-        v-for="artista in artistas"
-        :key="artista.nombre"
+        v-for="grupo in podcastsPorArtista"
+        :key="grupo.artista.id"
         class="artista-bloque"
       >
         <div class="artista-header">
-          <h2 class="nombre">{{ artista.nombre }}</h2>
-          <span class="count">{{ artista.podcasts?.length ?? 0 }} mixes</span>
+          <h2 class="nombre">{{ grupo.artista.nombre }}</h2>
+          <span class="count">{{ grupo.podcasts.length }} mixes</span>
         </div>
         <div class="separador"></div>
 
         <div
-          v-for="podcast in artista.podcasts ?? []"
+          v-for="podcast in grupo.podcasts"
           :key="podcast.id"
           class="podcast-item"
         >
