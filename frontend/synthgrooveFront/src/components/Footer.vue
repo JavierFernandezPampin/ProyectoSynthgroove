@@ -56,11 +56,11 @@
 
         <!-- Legal -->
         <div class="footer-legal">
-          <a href="/privacidad" class="legal-link">Política de privacidad</a>
+          <router-link to="/privacidad" class="legal-link">Política de privacidad</router-link>
           <span class="dot">·</span>
-          <a href="/cookies" class="legal-link">Política de cookies</a>
+          <router-link to="/cookies" class="legal-link">Política de cookies</router-link>
           <span class="dot">·</span>
-          <a href="/aviso-legal" class="legal-link">Aviso legal</a>
+          <router-link to="/aviso-legal" class="legal-link">Aviso legal</router-link>
         </div>
 
         <!-- Copyright -->

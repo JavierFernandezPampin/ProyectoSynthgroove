@@ -23,6 +23,9 @@ const router = createRouter({
       component: () => import("@/views/compra-cancelada.vue"),
     },
     { path: "/perfil", component: () => import("@/views/perfil.vue") },
+    { path: "/privacidad", component: () => import("@/views/privacidad.vue") },
+    { path: "/cookies", component: () => import("@/views/cookies.vue") },
+    { path: "/aviso-legal", component: () => import("@/views/aviso-legal.vue") },
   ],
 });
 
