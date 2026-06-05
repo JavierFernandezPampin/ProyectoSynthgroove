@@ -110,9 +110,10 @@ onMounted(async () => {
 
 .item-titulo {
   margin: 1rem 0 0;
-  color: #c8c0b4;
-  font-size: 0.95rem;
-  letter-spacing: 0.04em;
+  color: #f7f1e8;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
 }
 
 .empty {
