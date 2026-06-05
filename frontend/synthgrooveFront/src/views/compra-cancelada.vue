@@ -17,6 +17,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
   min-height: 60vh;
   padding: 2rem 1rem 3rem;
   background: #000;
