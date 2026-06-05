@@ -34,7 +34,7 @@
   flex: 1;
   display: flex;
   min-height: 0;
-  padding: 1.5rem 0;
+  padding: 0;
 }
 
 .hero {
@@ -44,37 +44,28 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 0;
-  margin-inline: auto;
-  margin-top: 0;
+  height: 64vh;
   overflow: hidden;
-  background: #121212;
-  isolation: isolate;
+  background: #000;
 }
 
 .hero-video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 75%;
+  height: auto;
+  max-height: 150%;
+  object-fit: contain;
+  display: block;
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 0.2) 0%,
-      rgba(0, 0, 0, 0.42) 50%,
-      rgba(0, 0, 0, 0.72) 100%
-    ),
-    rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+  pointer-events: none;
 }
 
 .hero-title {
-  position: relative;
+  position: absolute;
   z-index: 1;
   margin: 0;
   max-width: 16ch;
