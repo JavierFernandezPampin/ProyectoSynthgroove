@@ -73,7 +73,7 @@
   </footer>
 </template>
 
-<style>
+<style scoped>
 .footer {
   background-color: black;
   padding: 0 1.5rem 2rem;

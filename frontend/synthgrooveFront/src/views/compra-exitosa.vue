@@ -1,174 +1,107 @@
 <template>
-  <div class="compra-exitosa">
-    <div class="container">
-      <div class="success-card">
-        <div class="icon">✓</div>
-        <h1>¡Compra Exitosa!</h1>
-        <p>Tu pago ha sido procesado correctamente.</p>
-
-        <div class="detalles">
-          <p><strong>ID de sesión:</strong> {{ sessionId }}</p>
-          <p>En breve recibirás un email de confirmación.</p>
-        </div>
-
-        <div class="actions">
-          <router-link to="/" class="btn btn-primary"
-            >Volver al inicio</router-link
-          >
-          <router-link to="/merchandising" class="btn btn-secondary"
-            >Seguir comprando</router-link
-          >
-        </div>
+  <div class="compra-wrapper">
+    <div class="compra-card">
+      <div class="icono icono-ok">✓</div>
+      <h1>Compra exitosa</h1>
+      <p>Tu pago ha sido procesado correctamente. En breve recibirás un email de confirmación.</p>
+      <div class="actions">
+        <router-link to="/perfil" class="btn-primary">Ver mis pedidos</router-link>
+        <router-link to="/merchandising" class="btn-secondary">Seguir comprando</router-link>
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-
-const route = useRoute();
-const sessionId = ref("");
-
-onMounted(() => {
-  sessionId.value = (route.query.session_id as string) || "N/A";
-});
-</script>
-
 <style scoped>
-.compra-exitosa {
+.compra-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 70vh;
-  width: 100%;
-  padding: 2rem 0 3rem;
+  min-height: 60vh;
+  padding: 2rem 1rem 3rem;
   background: #000;
+  font-family: "Space Grotesk", "Avenir Next", "Trebuchet MS", sans-serif;
 }
 
-.container {
-  width: 100%;
-  max-width: 500px;
-  padding: 20px;
-}
-
-.success-card {
-  background: white;
+.compra-card {
+  width: min(100%, 480px);
+  background: #1a1a1a;
+  border: 1px solid #333;
   border-radius: 12px;
-  padding: 40px 30px;
+  padding: 2.5rem 2rem;
   text-align: center;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
-.icon {
-  font-size: 60px;
-  color: #4caf50;
-  margin-bottom: 20px;
-  display: inline-block;
-  background: #e8f5e9;
-  width: 80px;
-  height: 80px;
+.icono {
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
-  line-height: 80px;
+  font-size: 1.75rem;
+  line-height: 64px;
+  margin: 0 auto;
+}
+
+.icono-ok {
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid #4ade80;
+  color: #4ade80;
 }
 
 h1 {
-  color: #333;
-  margin-bottom: 10px;
-  font-size: 28px;
+  color: #f7f1e8;
+  font-size: 1.5rem;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.compra-exitosa > .container > .success-card > p {
-  color: #666;
-  font-size: 16px;
-  margin-bottom: 30px;
-}
-
-.detalles {
-  background: #f5f5f5;
-  padding: 20px;
-  border-radius: 8px;
-  margin: 20px 0;
-  text-align: left;
-}
-
-.detalles p {
-  margin: 10px 0;
-  font-size: 14px;
-  color: #555;
-}
-
-.detalles strong {
-  color: #333;
+p {
+  color: #888;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0;
 }
 
 .actions {
   display: flex;
-  gap: 10px;
-  margin-top: 30px;
   flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
 }
 
-.btn {
-  padding: 12px 20px;
-  border-radius: 8px;
+.btn-primary,
+.btn-secondary {
+  display: block;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   text-decoration: none;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  display: inline-block;
+  transition: background 0.2s;
+  font-family: inherit;
 }
 
 .btn-primary {
-  background-color: #667eea;
-  color: white;
+  background: #f7f1e8;
+  color: #111;
+  border: 1px solid #f7f1e8;
 }
 
 .btn-primary:hover {
-  background-color: #5568d3;
+  background: #e1d7c6;
 }
 
 .btn-secondary {
-  background-color: #e0e0e0;
-  color: #333;
+  background: transparent;
+  color: #f7f1e8;
+  border: 1px solid #333;
 }
 
 .btn-secondary:hover {
-  background-color: #d0d0d0;
-}
-
-@media (max-width: 600px) {
-  .success-card {
-    padding: 30px 20px;
-  }
-
-  h1 {
-    font-size: 24px;
-  }
-
-  .actions {
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 420px) {
-  .container {
-    padding: 16px;
-  }
-
-  .icon {
-    width: 64px;
-    height: 64px;
-    line-height: 64px;
-    font-size: 42px;
-  }
-
-  .detalles {
-    padding: 16px;
-  }
-
-  .btn {
-    width: 100%;
-  }
+  border-color: #f7f1e8;
 }
 </style>

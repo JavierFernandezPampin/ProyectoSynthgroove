@@ -72,7 +72,7 @@ onMounted(async () => {
   </div>
 </template>
 
-<style>
+<style scoped>
 .podcasts-wrapper {
   max-width: 760px;
   margin: 0 auto;

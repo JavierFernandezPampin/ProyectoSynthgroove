@@ -111,7 +111,7 @@ onMounted(async () => {
   </div>
 </template>
 
-<style>
+<style scoped>
 .sobre-wrapper {
   max-width: 900px;
   margin: 0 auto;

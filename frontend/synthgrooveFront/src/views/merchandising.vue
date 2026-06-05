@@ -97,7 +97,7 @@ async function comprar(producto: Producto) {
   </div>
 </template>
 
-<style>
+<style scoped>
 .merch-wrapper {
   max-width: 960px;
   margin: 0 auto;

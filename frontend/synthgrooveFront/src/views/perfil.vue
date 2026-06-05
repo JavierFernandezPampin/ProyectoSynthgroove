@@ -40,7 +40,6 @@ async function loadUserData() {
     pedidos.value = await getPedidos(auth.access);
   } catch (err: any) {
     error.value = err.message || "Error al cargar los datos del perfil";
-    console.error(err);
   } finally {
     loading.value = false;
   }
@@ -50,7 +49,7 @@ async function handleChangePassword() {
   passwordError.value = "";
   passwordSuccess.value = "";
 
-  if (!newPassword.value || !confirmPassword.value) {
+  if (!oldPassword.value || !newPassword.value || !confirmPassword.value) {
     passwordError.value = "Por favor completa todos los campos";
     return;
   }
@@ -60,15 +59,9 @@ async function handleChangePassword() {
     return;
   }
 
-  if (!auth.access || !oldPassword.value || !newPassword.value) {
-    passwordError.value =
-      "Faltan datos obligatorios para cambiar la contraseña.";
-    return;
-  }
-
   changingPassword.value = true;
   try {
-await changePassword(auth.access ?? "", oldPassword.value, newPassword.value);
+    await changePassword(auth.access!, oldPassword.value, newPassword.value);
     passwordSuccess.value = "Contraseña cambiada exitosamente";
     oldPassword.value = "";
     newPassword.value = "";
@@ -467,33 +460,24 @@ section {
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
-  border: none;
   font-family: "Space Grotesk", "Avenir Next", "Trebuchet MS", sans-serif;
 }
 
-.btn-primary {
-  background: transparent;
-  border: 1px solid #f7f1e8;
-  color: #f7f1e8;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: rgba(247, 241, 232, 0.1);
-}
-
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
+.btn-primary,
 .btn-secondary {
   background: transparent;
   border: 1px solid #f7f1e8;
   color: #f7f1e8;
 }
 
+.btn-primary:hover:not(:disabled),
 .btn-secondary:hover {
   background: rgba(247, 241, 232, 0.1);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-cancel {
@@ -632,13 +616,6 @@ section {
 
 .error-container .error-message {
   margin: 0;
-}
-
-/* Router link styling */
-router-link,
-.btn-primary {
-  text-decoration: none;
-  display: inline-block;
 }
 
 /* Responsive */
