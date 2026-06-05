@@ -23,9 +23,7 @@ from .serializers import (
 
 logger = logging.getLogger(__name__)
 
-DESCUENTO_AUTENTICADO = Decimal("0.80")
 CENTIMOS = Decimal("100")
-CENTIMO = Decimal("0.01")
 
 
 class EsGestorOAdmin(permissions.BasePermission):
@@ -245,10 +243,7 @@ class PagoStripeAPIView(APIView):
 
         stripe.api_key = settings.STRIPE_SECRET_KEY
         es_autenticado = request.user.is_authenticated
-        if tipo == 'producto' and es_autenticado:
-            precio_unitario = (obj.precio * DESCUENTO_AUTENTICADO).quantize(CENTIMO, rounding=ROUND_HALF_UP)
-        else:
-            precio_unitario = obj.precio
+        precio_unitario = obj.precio
         monto_total = precio_unitario * cantidad
         unit_amount = int(
             (precio_unitario * CENTIMOS).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
