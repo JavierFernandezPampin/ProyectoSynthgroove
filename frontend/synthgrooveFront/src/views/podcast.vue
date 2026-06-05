@@ -53,6 +53,7 @@ onMounted(async () => {
           allow="autoplay; encrypted-media"
           :src="`https://w.soundcloud.com/player/?url=${encodeURIComponent(podcast.url)}&color=%23002363&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`"
         ></iframe>
+        <p class="item-titulo">{{ podcast.title }}</p>
       </div>
     </div>
   </div>
@@ -85,12 +86,34 @@ onMounted(async () => {
 .podcasts-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  column-gap: 0;
+  row-gap: 3rem;
+}
+
+.podcast-item {
+  padding: 0 2rem;
+}
+
+.podcast-item:nth-child(odd) {
+  border-right: 1px solid #222;
+  padding-left: 0;
+}
+
+.podcast-item:nth-child(even) {
+  padding-right: 0;
 }
 
 .podcast-item iframe {
   border: 0;
   display: block;
+}
+
+.item-titulo {
+  margin: 0.75rem 0 0;
+  color: #888;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .empty {
@@ -128,6 +151,14 @@ onMounted(async () => {
 
   .podcasts-grid {
     grid-template-columns: 1fr;
+    row-gap: 2rem;
+  }
+
+  .podcast-item,
+  .podcast-item:nth-child(odd),
+  .podcast-item:nth-child(even) {
+    padding: 0;
+    border-right: none;
   }
 }
 </style>
