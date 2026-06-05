@@ -166,13 +166,6 @@ async function handleLogout() {
     transform 0.2s ease;
 }
 
-.profile-icon--guest {
-  opacity: 0.4;
-}
-
-.profile-icon--guest:hover {
-  opacity: 1;
-}
 
 .profile-icon:hover {
   color: #f7f1e8;
