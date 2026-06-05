@@ -168,6 +168,14 @@ class EsAdmin(permissions.BasePermission):
         return request.user.is_authenticated and request.user.rol == 'admin'
 
 
+class PedidosAdminAPIView(generics.ListAPIView):
+    serializer_class = PedidoSerializer
+    permission_classes = [EsAdmin]
+
+    def get_queryset(self):
+        return Pedido.objects.select_related('usuario', 'producto').order_by('-fecha')
+
+
 class UsuariosAdminAPIView(APIView):
     permission_classes = [EsAdmin]
 

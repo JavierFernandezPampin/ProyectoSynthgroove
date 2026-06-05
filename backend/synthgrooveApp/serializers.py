@@ -66,10 +66,11 @@ class UsuarioSerializer(serializers.ModelSerializer):
 class PedidoSerializer(serializers.ModelSerializer):
     producto_nombre = serializers.CharField(source='producto.nombre', read_only=True)
     producto_imagen = serializers.SerializerMethodField()
+    usuario_nombre = serializers.CharField(source='usuario.usuario', read_only=True)
 
     def get_producto_imagen(self, obj):
         return _cloudinary_https(obj.producto.imagen if obj.producto else None)
 
     class Meta:
         model = Pedido
-        fields = ['id', 'producto', 'producto_nombre', 'producto_imagen', 'cantidad', 'precio_unitario', 'fecha']
+        fields = ['id', 'usuario', 'usuario_nombre', 'producto', 'producto_nombre', 'producto_imagen', 'cantidad', 'precio_unitario', 'fecha']

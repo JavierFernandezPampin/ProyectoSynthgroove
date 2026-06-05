@@ -8,6 +8,7 @@ import {
   getUsuarios,
   deleteUsuario,
   changeUserRole,
+  getAllPedidos,
 } from "@/services/userService";
 import type { UserProfile, Pedido } from "@/services/userService";
 import {
@@ -31,6 +32,7 @@ const error = ref("");
 // Admin
 const usuarios = ref<UserProfile[]>([]);
 const deletingId = ref<number | null>(null);
+const todosLosPedidos = ref<Pedido[]>([]);
 const changingRoleId = ref<number | null>(null);
 
 async function handleChangeRole(id: number, rolActual: string) {
@@ -250,7 +252,7 @@ async function loadUserData() {
     userProfile.value = await getUserProfile(auth.access);
     const rol = userProfile.value?.rol;
     if (rol === "admin") {
-      await Promise.all([loadUsuarios(), loadGestion()]);
+      await Promise.all([loadUsuarios(), loadGestion(), getAllPedidos(auth.access).then(p => { todosLosPedidos.value = p; })]);
     } else if (rol === "gestor") {
       await loadGestion();
     } else {
@@ -482,6 +484,49 @@ onMounted(() => {
                   {{ deletingId === u.id ? "..." : "Eliminar" }}
                 </button>
               </span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Historial de pedidos (solo admin) -->
+        <section v-if="userProfile.rol === 'admin'" class="orders-section">
+          <h2 class="section-title">Historial de Pedidos</h2>
+
+          <div v-if="todosLosPedidos.length === 0" class="empty-state">
+            <p>No hay pedidos aún</p>
+          </div>
+
+          <div v-else>
+            <div class="historial-resumen">
+              <div class="resumen-item">
+                <span class="resumen-label">Total pedidos</span>
+                <span class="resumen-valor">{{ todosLosPedidos.length }}</span>
+              </div>
+              <div class="resumen-item">
+                <span class="resumen-label">Ingresos totales</span>
+                <span class="resumen-valor">{{
+                  euroFormatter.format(
+                    todosLosPedidos.reduce((acc, p) => acc + p.precio_unitario * p.cantidad, 0)
+                  )
+                }}</span>
+              </div>
+            </div>
+
+            <div class="historial-table">
+              <div class="historial-header">
+                <span>Usuario</span>
+                <span>Producto</span>
+                <span>Cant.</span>
+                <span>Total</span>
+                <span>Fecha</span>
+              </div>
+              <div v-for="p in todosLosPedidos" :key="p.id" class="historial-row">
+                <span class="historial-cell">{{ p.usuario_nombre }}</span>
+                <span class="historial-cell">{{ p.producto_nombre }}</span>
+                <span class="historial-cell historial-center">{{ p.cantidad }}</span>
+                <span class="historial-cell">{{ euroFormatter.format(p.precio_unitario * p.cantidad) }}</span>
+                <span class="historial-cell historial-date">{{ formatDate(p.fecha) }}</span>
+              </div>
             </div>
           </div>
         </section>
@@ -1044,6 +1089,100 @@ section {
 
 .detail-item.total .detail-value {
   color: #f7f1e8;
+}
+
+/* Historial de pedidos (admin) */
+.historial-resumen {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.resumen-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.resumen-label {
+  color: #999;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.resumen-valor {
+  color: #f7f1e8;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.historial-table {
+  border: 1px solid #333;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.historial-header {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 0.4fr 0.8fr 1.4fr;
+  padding: 0.7rem 1rem;
+  background: #111;
+  color: #999;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid #333;
+}
+
+.historial-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 0.4fr 0.8fr 1.4fr;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #222;
+  align-items: center;
+  transition: background 0.15s;
+}
+
+.historial-row:last-child {
+  border-bottom: none;
+}
+
+.historial-row:hover {
+  background: #111;
+}
+
+.historial-cell {
+  color: #f7f1e8;
+  font-size: 0.88rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.historial-center {
+  text-align: center;
+}
+
+.historial-date {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 720px) {
+  .historial-header,
+  .historial-row {
+    grid-template-columns: 1fr 1fr 0.5fr 0.8fr;
+  }
+
+  .historial-cell:last-child,
+  .historial-header span:last-child {
+    display: none;
+  }
+
+  .historial-resumen {
+    gap: 1.5rem;
+  }
 }
 
 /* Gestión de contenido */

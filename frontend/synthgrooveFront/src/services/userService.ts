@@ -21,6 +21,8 @@ export const getUserProfile = async (token: string): Promise<UserProfile> => {
 
 export interface Pedido {
   id: number;
+  usuario: number;
+  usuario_nombre?: string;
   producto: number;
   producto_nombre: string;
   producto_imagen: string | null;
@@ -34,6 +36,14 @@ export const getPedidos = async (token: string): Promise<Pedido[]> => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+  });
+  if (!response.ok) throw new Error("Error al cargar los pedidos");
+  return response.json();
+};
+
+export const getAllPedidos = async (token: string): Promise<Pedido[]> => {
+  const response = await fetch(`${API_URL}/api/admin/pedidos/`, {
+    headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) throw new Error("Error al cargar los pedidos");
   return response.json();
