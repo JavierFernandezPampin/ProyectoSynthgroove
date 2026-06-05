@@ -231,9 +231,35 @@ class SincronizarPedidosAPIView(APIView):
         
         return Response({
             'status': 'success',
+            'pagos_encontrados': pagos.count(),
             'pedidos_creados': creados,
             'pedidos_existentes': existentes,
             'errores': errores
+        })
+    
+    def get(self, request):
+        """Ver estado de pagos del usuario"""
+        pagos = Pago.objects.filter(usuario=request.user)
+        pedidos = Pedido.objects.filter(usuario=request.user)
+        
+        pagos_data = [
+            {
+                'id': p.id,
+                'producto': p.producto.nombre if p.producto else None,
+                'evento': p.evento.nombre if p.evento else None,
+                'cantidad': p.cantidad,
+                'monto': str(p.monto),
+                'pagado': p.pagado,
+                'fecha': p.fecha.isoformat() if p.fecha else None,
+            }
+            for p in pagos.order_by('-fecha')
+        ]
+        
+        return Response({
+            'pagos_totales': pagos.count(),
+            'pagos_confirmados': pagos.filter(pagado=True).count(),
+            'pedidos_totales': pedidos.count(),
+            'pagos': pagos_data
         })
 
 
