@@ -50,7 +50,7 @@
 }
 
 .hero-video {
-  width: 75%;
+  width: 70%;
   height: auto;
   max-height: 150%;
   object-fit: contain;
