@@ -45,6 +45,7 @@
   justify-content: center;
   width: 100%;
   min-height: 0;
+  max-height: calc(100vh - 160px);
   margin-inline: auto;
   margin-top: 0;
   overflow: hidden;
