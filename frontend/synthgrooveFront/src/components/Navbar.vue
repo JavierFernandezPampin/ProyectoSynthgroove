@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, watch } from "vue";
 import { useAuthStore } from "@/stores/auth.js";
 import { useRoute, useRouter } from "vue-router";
 
@@ -8,6 +9,8 @@ const logoBlanco = new URL("../assets/img/logoBlanco.png", import.meta.url)
 const auth = useAuthStore();
 const route = useRoute();
 const router = useRouter();
+const menuOpen = ref(false);
+
 const navItems = [
   { label: "Inicio", path: "/" },
   { label: "Merchandising", path: "/merchandising" },
@@ -16,6 +19,8 @@ const navItems = [
   { label: "Podcasts", path: "/podcasts" },
   { label: "Sobre", path: "/sobre" },
 ];
+
+watch(() => route.path, () => { menuOpen.value = false; });
 
 async function handleLogout() {
   await auth.logout();
@@ -73,10 +78,26 @@ async function handleLogout() {
             <circle cx="12" cy="7" r="4"></circle>
           </svg>
         </router-link>
+
+        <button
+          class="hamburger"
+          :class="{ 'is-open': menuOpen }"
+          :aria-label="menuOpen ? 'Cerrar menú' : 'Abrir menú'"
+          :aria-expanded="menuOpen"
+          @click="menuOpen = !menuOpen"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
     </div>
 
-    <nav class="section-nav" aria-label="Secciones principales">
+    <nav
+      class="section-nav"
+      :class="{ 'is-open': menuOpen }"
+      aria-label="Secciones principales"
+    >
       <ul class="section-nav__list">
         <li v-for="item in navItems" :key="item.path">
           <router-link
@@ -147,8 +168,43 @@ async function handleLogout() {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 0.5rem;
 }
 
+/* --- Hamburger button (hidden on desktop) --- */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.hamburger span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: #f7f1e8;
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.hamburger.is-open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.hamburger.is-open span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.is-open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* --- Profile icon --- */
 .profile-icon {
   display: flex;
   align-items: center;
@@ -165,7 +221,6 @@ async function handleLogout() {
     background 0.2s ease,
     transform 0.2s ease;
 }
-
 
 .profile-icon:hover {
   color: #f7f1e8;
@@ -186,6 +241,7 @@ async function handleLogout() {
   stroke-width: 2;
 }
 
+/* --- Desktop section nav --- */
 .section-nav {
   padding: 0 1.25rem 1rem;
 }
@@ -241,80 +297,53 @@ async function handleLogout() {
   border-color: #f7f1e8;
 }
 
+/* --- Mobile: hamburger dropdown --- */
 @media (max-width: 780px) {
   .brand-top {
-    grid-template-columns: 1fr;
-    padding-bottom: 0.85rem;
-    text-align: center;
-  }
-
-  .nav-auth,
-  .brand-center,
-  .brand-spacer {
-    justify-self: center;
-  }
-
-  .nav-auth {
-    order: 2;
-    justify-content: center;
-    width: 100%;
-  }
-
-  .brand-center {
-    order: 1;
-  }
-
-  .brand-spacer {
-    order: 3;
-    margin-top: 0.5rem;
-  }
-
-  .section-nav {
-    padding-top: 0.1rem;
-  }
-
-  .section-nav__list {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .section-nav__link {
-    width: 100%;
-    min-height: 2.9rem;
-    padding-inline: 0.75rem;
-    letter-spacing: 0.12em;
-  }
-
-  .nav-usuario {
-    white-space: normal;
-    text-align: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .brand-top {
-    padding-inline: 1rem;
-  }
-
-  .section-nav {
-    padding-inline: 1rem;
-  }
-
-  .section-nav__list {
-    grid-template-columns: 1fr;
+    padding: 0.75rem 1rem;
   }
 
   .brand-logo {
     width: 60px;
   }
 
-  .nav-auth {
-    gap: 0.6rem;
+  /* Hide username, keep the button */
+  .nav-usuario {
+    display: none;
+  }
+
+  /* Show hamburger */
+  .hamburger {
+    display: flex;
+  }
+
+  /* Collapse nav by default, expand on .is-open */
+  .section-nav {
+    overflow: hidden;
+    max-height: 0;
+    padding: 0 1rem;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+
+  .section-nav.is-open {
+    max-height: 480px;
+    padding: 0.5rem 1rem 1.25rem;
+  }
+
+  .section-nav__list {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.3rem;
   }
 
   .section-nav__link {
-    min-height: 2.65rem;
-    font-size: 0.7rem;
+    width: 100%;
+    border-radius: 8px;
+    justify-content: center;
+    min-height: 2.9rem;
+    padding: 0.85rem 1.25rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
   }
 }
 </style>
