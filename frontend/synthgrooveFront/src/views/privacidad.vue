@@ -11,7 +11,7 @@
             El responsable del tratamiento de los datos personales recogidos en
             este sitio web es <strong>Synthgroove Collective</strong>, con
             dirección de contacto en
-            <a href="mailto:info@synthgroove.com">info@synthgroove.com</a>.
+            <a href="mailto:synthgroove@gmail.com">synthgroove@gmail.com</a>.
           </p>
         </section>
 
@@ -70,7 +70,7 @@
             Conforme al RGPD y la LOPDGDD, puedes ejercer en cualquier momento
             los derechos de acceso, rectificación, supresión, portabilidad,
             limitación del tratamiento y oposición escribiendo a
-            <a href="mailto:info@synthgroove.com">info@synthgroove.com</a>. Si
+            <a href="mailto:synthgroove@gmail.com">synthgroove@gmail.com</a>. Si
             consideras que el tratamiento no se ajusta a la normativa, puedes
             presentar una reclamación ante la
             <strong>Agencia Española de Protección de Datos</strong>

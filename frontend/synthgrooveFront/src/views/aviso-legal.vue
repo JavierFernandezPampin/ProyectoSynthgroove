@@ -16,7 +16,7 @@
             <li><strong>Denominación:</strong> Synthgroove Collective</li>
             <li>
               <strong>Correo electrónico:</strong>
-              <a href="mailto:info@synthgroove.com">info@synthgroove.com</a>
+              <a href="mailto:synthgroove@gmail.com">synthgroove@gmail.com</a>
             </li>
           </ul>
         </section>
