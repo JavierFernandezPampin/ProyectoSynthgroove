@@ -176,6 +176,18 @@ class UsuariosAdminAPIView(APIView):
         data = UsuarioSerializer(usuarios, many=True).data
         return Response(data)
 
+    def patch(self, request, pk):
+        try:
+            usuario = Usuario.objects.exclude(rol='admin').get(pk=pk)
+        except Usuario.DoesNotExist:
+            return Response({'error': 'Usuario no encontrado'}, status=404)
+        nuevo_rol = request.data.get('rol')
+        if nuevo_rol not in ['suscriptor', 'gestor']:
+            return Response({'error': 'Rol inválido'}, status=400)
+        usuario.rol = nuevo_rol
+        usuario.save()
+        return Response(UsuarioSerializer(usuario).data)
+
     def delete(self, request, pk):
         try:
             usuario = Usuario.objects.exclude(rol='admin').get(pk=pk)

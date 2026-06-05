@@ -47,6 +47,23 @@ export const getUsuarios = async (token: string): Promise<UserProfile[]> => {
   return response.json();
 };
 
+export const changeUserRole = async (
+  token: string,
+  id: number,
+  rol: "suscriptor" | "gestor"
+): Promise<UserProfile> => {
+  const response = await fetch(`${API_URL}/api/admin/usuarios/${id}/`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ rol }),
+  });
+  if (!response.ok) throw new Error("Error al cambiar el rol");
+  return response.json();
+};
+
 export const deleteUsuario = async (token: string, id: number): Promise<void> => {
   const response = await fetch(`${API_URL}/api/admin/usuarios/${id}/`, {
     method: "DELETE",

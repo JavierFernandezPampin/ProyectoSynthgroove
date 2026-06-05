@@ -7,6 +7,7 @@ import {
   changePassword,
   getUsuarios,
   deleteUsuario,
+  changeUserRole,
 } from "@/services/userService";
 import type { UserProfile, Pedido } from "@/services/userService";
 import {
@@ -30,6 +31,22 @@ const error = ref("");
 // Admin
 const usuarios = ref<UserProfile[]>([]);
 const deletingId = ref<number | null>(null);
+const changingRoleId = ref<number | null>(null);
+
+async function handleChangeRole(id: number, rolActual: string) {
+  if (!auth.access) return;
+  const nuevoRol = rolActual === "suscriptor" ? "gestor" : "suscriptor";
+  changingRoleId.value = id;
+  try {
+    const updated = await changeUserRole(auth.access, id, nuevoRol);
+    const idx = usuarios.value.findIndex((u) => u.id === id);
+    if (idx !== -1) usuarios.value[idx] = updated;
+  } catch {
+    error.value = "Error al cambiar el rol";
+  } finally {
+    changingRoleId.value = null;
+  }
+}
 
 async function loadUsuarios() {
   if (!auth.access) return;
@@ -451,11 +468,18 @@ onMounted(() => {
               </span>
               <span class="admin-cell admin-cell-action">
                 <button
+                  class="btn-role"
+                  :disabled="changingRoleId === u.id"
+                  @click="handleChangeRole(u.id, u.rol)"
+                >
+                  {{ changingRoleId === u.id ? "..." : u.rol === "suscriptor" ? "→ Gestor" : "→ Suscriptor" }}
+                </button>
+                <button
                   class="btn-delete"
                   :disabled="deletingId === u.id"
                   @click="handleDeleteUsuario(u.id)"
                 >
-                  {{ deletingId === u.id ? "Eliminando..." : "Eliminar" }}
+                  {{ deletingId === u.id ? "..." : "Eliminar" }}
                 </button>
               </span>
             </div>
@@ -1208,7 +1232,7 @@ section {
 
 .admin-table-header {
   display: grid;
-  grid-template-columns: 1fr 1.5fr 0.7fr 120px;
+  grid-template-columns: 1fr 1.5fr 0.7fr 200px;
   padding: 0.75rem 1rem;
   background: #111;
   color: #999;
@@ -1220,7 +1244,7 @@ section {
 
 .admin-table-row {
   display: grid;
-  grid-template-columns: 1fr 1.5fr 0.7fr 120px;
+  grid-template-columns: 1fr 1.5fr 0.7fr 200px;
   padding: 0.85rem 1rem;
   border-bottom: 1px solid #222;
   align-items: center;
@@ -1262,6 +1286,29 @@ section {
   color: #aaa;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.btn-role {
+  background: transparent;
+  border: 1px solid #555;
+  color: #aaa;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-role:hover:not(:disabled) {
+  border-color: #f7f1e8;
+  color: #f7f1e8;
+}
+
+.btn-role:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-delete {
