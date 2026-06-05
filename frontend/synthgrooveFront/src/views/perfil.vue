@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/stores/auth";
-import { getUserProfile, getPedidos, changePassword } from "@/services/userService";
+import {
+  getUserProfile,
+  getPedidos,
+  changePassword,
+} from "@/services/userService";
 import type { UserProfile, Pedido } from "@/services/userService";
 
 const auth = useAuthStore();
@@ -56,8 +60,9 @@ async function handleChangePassword() {
     return;
   }
 
-  if (newPassword.value.length < 6) {
-    passwordError.value = "La contraseña debe tener al menos 6 caracteres";
+  if (!auth.access || !oldPassword.value || !newPassword.value) {
+    passwordError.value =
+      "Faltan datos obligatorios para cambiar la contraseña.";
     return;
   }
 
@@ -70,8 +75,7 @@ await changePassword(auth.access ?? "", oldPassword.value, newPassword.value);
     confirmPassword.value = "";
     showChangePasswordForm.value = false;
   } catch (err: any) {
-    passwordError.value =
-      err.message || "Error al cambiar la contraseña";
+    passwordError.value = err.message || "Error al cambiar la contraseña";
   } finally {
     changingPassword.value = false;
   }
@@ -114,7 +118,10 @@ onMounted(() => {
       </div>
 
       <!-- Autenticado -->
-      <div v-else-if="auth.isAuthenticated && userProfile" class="perfil-content">
+      <div
+        v-else-if="auth.isAuthenticated && userProfile"
+        class="perfil-content"
+      >
         <!-- Sección de información del usuario -->
         <section class="user-section">
           <h2 class="section-title">Mi Perfil</h2>
@@ -262,7 +269,7 @@ onMounted(() => {
                   <span class="detail-value">
                     {{
                       euroFormatter.format(
-                        pedido.precio_unitario * pedido.cantidad
+                        pedido.precio_unitario * pedido.cantidad,
                       )
                     }}
                   </span>
