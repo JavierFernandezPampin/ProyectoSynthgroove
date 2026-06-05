@@ -251,13 +251,13 @@ def stripe_webhook(request):
         logger.warning(f"Pago no encontrado para session {session_id}")
         return HttpResponse(status=200)
 
+    if pago.pagado:
+        return HttpResponse(status=200)
+
     pago.pagado = True
     pago.save()
 
     if not pago.producto or not pago.usuario:
-        return HttpResponse(status=200)
-
-    if Pedido.objects.filter(usuario=pago.usuario, producto=pago.producto, cantidad=pago.cantidad).exists():
         return HttpResponse(status=200)
 
     try:
