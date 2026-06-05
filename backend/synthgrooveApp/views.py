@@ -147,8 +147,6 @@ class ChangePasswordAPIView(APIView):
             return Response({"error": "Todos los campos son obligatorios."}, status=400)
         if not request.user.check_password(old_password):
             return Response({"error": "La contraseña actual es incorrecta."}, status=400)
-        if len(new_password) < 6:
-            return Response({"error": "La contraseña debe tener al menos 6 caracteres."}, status=400)
 
         request.user.set_password(new_password)
         request.user.save()
