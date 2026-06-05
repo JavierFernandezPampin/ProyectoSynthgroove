@@ -16,12 +16,6 @@ const productos = ref<Producto[]>([]);
 const loading = ref(true);
 const authStore = useAuthStore();
 
-function precioFinal(precio: number): number {
-  return authStore.isAuthenticated
-    ? Math.round(precio * 0.8 * 100) / 100
-    : precio;
-}
-
 onMounted(async () => {
   try {
     productos.value = await getProductos();
@@ -63,31 +57,18 @@ async function comprar(producto: Producto) {
             <h5 class="producto-nombre">{{ producto.nombre }}</h5>
             <p class="producto-descripcion">{{ producto.descripcion }}</p>
             <div class="producto-footer">
-              <div class="producto-precios">
-                <template v-if="authStore.isAuthenticated">
-                  <span class="producto-precio-original"
-                    >{{ producto.precio }} €</span
-                  >
-                  <div class="precio-fila">
-                    <span class="producto-precio"
-                      >{{ precioFinal(producto.precio) }} €</span
-                    >
-                    <span class="descuento-badge">-20%</span>
-                  </div>
-                </template>
-                <span v-else class="producto-precio"
-                  >{{ producto.precio }} €</span
-                >
-              </div>
+              <span class="producto-precio">{{ producto.precio }} €</span>
               <button
+                v-if="authStore.isAuthenticated"
                 class="btn-reservar"
                 :disabled="pagandoId === producto.id"
                 @click="comprar(producto)"
               >
-                {{
-                  pagandoId === producto.id ? "Redirigiendo..." : "Comprar →"
-                }}
+                {{ pagandoId === producto.id ? "Redirigiendo..." : "Comprar →" }}
               </button>
+              <router-link v-else to="/login" class="btn-login-hint">
+                Inicia sesión para comprar
+              </router-link>
             </div>
           </div>
         </div>
@@ -175,12 +156,6 @@ async function comprar(producto: Producto) {
   gap: 0.15rem;
 }
 
-.precio-fila {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 .producto-precio {
   font-size: 1.25rem;
   font-weight: 700;
@@ -188,22 +163,21 @@ async function comprar(producto: Producto) {
   letter-spacing: 0.05em;
 }
 
-.producto-precio-original {
-  font-size: 0.95rem;
-  font-weight: 400;
-  color: #555;
-  text-decoration: line-through;
-  letter-spacing: 0.05em;
-}
-
-.descuento-badge {
-  font-size: 0.6rem;
+.btn-login-hint {
+  font-size: 0.7rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #111;
-  background: #f7f1e8;
-  padding: 2px 6px;
-  font-weight: 700;
+  color: #555;
+  text-decoration: none;
+  border-bottom: 1px solid #333;
+  padding-bottom: 1px;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.btn-login-hint:hover {
+  color: #f7f1e8;
+  border-bottom-color: #f7f1e8;
 }
 
 .btn-reservar {
