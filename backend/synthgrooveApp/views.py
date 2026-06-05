@@ -35,7 +35,7 @@ class EsGestorOAdmin(permissions.BasePermission):
 
 
 class ArtistaListCreateAPI(generics.ListCreateAPIView):
-    queryset = Artista.objects.all()
+    queryset = Artista.objects.prefetch_related('releases', 'podcasts').all()
     serializer_class = ArtistaSerializer
     permission_classes = [EsGestorOAdmin]
 
@@ -160,7 +160,7 @@ class PedidosAPIView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Pedido.objects.filter(usuario=self.request.user).order_by('-fecha')
+        return Pedido.objects.select_related('producto').filter(usuario=self.request.user).order_by('-fecha')
 
 
 class EsAdmin(permissions.BasePermission):
