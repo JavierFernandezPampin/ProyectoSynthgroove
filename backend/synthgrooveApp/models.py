@@ -141,7 +141,7 @@ class Pedido(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name="pedidos")
     cantidad = models.IntegerField()
     precio_unitario = models.DecimalField(max_digits=8, decimal_places=2)
-    fecha = models.DateField(auto_now_add=True)
+    fecha = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Pedido {self.id} - {self.usuario.usuario}"
