@@ -87,7 +87,7 @@ onMounted(async () => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 0;
-  row-gap: 3rem;
+  row-gap: 4rem;
 }
 
 .podcast-item {
@@ -109,11 +109,10 @@ onMounted(async () => {
 }
 
 .item-titulo {
-  margin: 0.75rem 0 0;
-  color: #888;
-  font-size: 0.8rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  margin: 1rem 0 0;
+  color: #c8c0b4;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
 }
 
 .empty {
