@@ -247,6 +247,8 @@ class PruebaWebhookAPIView(APIView):
         except Exception as e:
             logger.error(f"❌ Error en test: {str(e)}", exc_info=True)
             return Response({'error': str(e)}, status=500)
+
+class SincronizarPedidosAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
