@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
+const API_URL = import.meta.env.VITE_API_URL ?? "";
 
 export async function iniciarPago(
   tipo: "producto" | "evento",
@@ -15,7 +15,7 @@ export async function iniciarPago(
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE}/api/pago/stripe/`, {
+  const response = await fetch(`${API_URL}/api/pago/stripe/`, {
     method: "POST",
     headers,
     body: JSON.stringify({ tipo, id, cantidad }),

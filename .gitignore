@@ -6,10 +6,10 @@ node_modules/
 backend/venv/
 frontend/synthgrooveFront/dist/
 
-# Environment variables (solo ignorar en producción)
-# .env
-# .env.local
-# .env.*.local
+# Environment variables
+.env
+.env.local
+.env.*.local
 
 # IDE
 .vscode/

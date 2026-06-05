@@ -2,20 +2,16 @@
 import { ref, onMounted } from "vue";
 import { getArtistas } from "@/services/artistService";
 
-interface Podcast {
+interface Release {
   id: number;
-  title: string;
+  titulo: string;
   url: string;
 }
 
 interface Artista {
   id: number;
   nombre: string;
-  bio: string;
-  instagram: string;
-  soundcloud: string;
-  imagen: string;
-  podcasts: Podcast[];
+  releases: Release[];
 }
 
 const artistas = ref<Artista[]>([]);
@@ -33,36 +29,36 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="podcasts-wrapper">
-    <h1 class="titulo">LATEST PODCASTS</h1>
+  <div class="releases-wrapper">
+    <h1 class="titulo">LATEST RELEASES</h1>
     <div class="separador"></div>
     <div v-if="loading" class="spinner-wrapper">
       <div class="spinner"></div>
     </div>
     <div v-else>
       <div
-        v-for="artista in artistas"
+        v-for="artista in artistas.filter((a) => a.releases?.length)"
         :key="artista.nombre"
         class="artista-bloque"
       >
         <div class="artista-header">
           <h2 class="nombre">{{ artista.nombre }}</h2>
-          <span class="count">{{ artista.podcasts?.length ?? 0 }} mixes</span>
+          <span class="count">{{ artista.releases?.length ?? 0 }} releases</span>
         </div>
         <div class="separador"></div>
 
         <div
-          v-for="podcast in artista.podcasts ?? []"
-          :key="podcast.id"
-          class="podcast-item"
+          v-for="release in artista.releases ?? []"
+          :key="release.id"
+          class="release-item"
         >
-          <p>{{ podcast.title }}</p>
+          <p>{{ release.titulo }}</p>
           <iframe
             width="100%"
             height="100"
             scrolling="no"
             frameborder="no"
-            :src="`https://w.soundcloud.com/player/?url=${podcast.url}&color=%23002363&auto_play=false`"
+            :src="`https://w.soundcloud.com/player/?url=${release.url}&color=%23002363&auto_play=false`"
           ></iframe>
         </div>
 
@@ -72,8 +68,8 @@ onMounted(async () => {
   </div>
 </template>
 
-<style>
-.podcasts-wrapper {
+<style scoped>
+.releases-wrapper {
   max-width: 760px;
   margin: 0 auto;
   padding: 3rem 1.5rem;
@@ -123,17 +119,17 @@ onMounted(async () => {
   color: #444;
 }
 
-.podcast-item {
+.release-item {
   margin-bottom: 0.75rem;
 }
 
-.podcast-item p {
+.release-item p {
   margin: 0 0 0.65rem;
   color: #f7f1e8;
   line-height: 1.5;
 }
 
-.podcast-item iframe {
+.release-item iframe {
   border: 0;
 }
 
@@ -160,7 +156,7 @@ onMounted(async () => {
 }
 
 @media (max-width: 640px) {
-  .podcasts-wrapper {
+  .releases-wrapper {
     padding: 2rem 1rem 3rem;
   }
 
