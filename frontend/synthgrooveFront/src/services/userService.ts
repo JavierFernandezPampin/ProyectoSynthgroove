@@ -82,6 +82,29 @@ export const deleteUsuario = async (token: string, id: number): Promise<void> =>
   if (!response.ok) throw new Error("Error al eliminar el usuario");
 };
 
+export interface Entrada {
+  id: number;
+  usuario: number;
+  usuario_nombre: string;
+  usuario_mail: string;
+  evento: number;
+  evento_nombre: string;
+  evento_fecha: string | null;
+  evento_localizacion: string;
+  evento_imagen: string | null;
+  cantidad: number;
+  precio_unitario: number;
+  fecha: string;
+}
+
+export const getEntradas = async (token: string): Promise<Entrada[]> => {
+  const response = await fetch(`${API_URL}/api/entradas/`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error("Error al cargar las entradas");
+  return response.json();
+};
+
 export const changePassword = async (
   token: string,
   oldPassword: string,

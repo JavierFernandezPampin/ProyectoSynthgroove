@@ -9,7 +9,7 @@ from decimal import Decimal, ROUND_HALF_UP
 import logging
 import stripe
 
-from .models import Artista, Evento, Producto, Release, Podcast, Usuario, Pago, Pedido
+from .models import Artista, Evento, Producto, Release, Podcast, Usuario, Pago, Pedido, Entrada
 from .serializers import (
     ArtistaSerializer,
     EventoSerializer,
@@ -18,6 +18,7 @@ from .serializers import (
     PodcastSerializer,
     UsuarioSerializer,
     PedidoSerializer,
+    EntradaSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -163,6 +164,14 @@ class PedidosAPIView(generics.ListAPIView):
         return Pedido.objects.select_related('producto').filter(usuario=self.request.user).order_by('-fecha')
 
 
+class EntradasAPIView(generics.ListAPIView):
+    serializer_class = EntradaSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Entrada.objects.select_related('evento', 'usuario').filter(usuario=self.request.user).order_by('-fecha')
+
+
 class EsAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.rol == 'admin'
@@ -305,23 +314,38 @@ def stripe_webhook(request):
     pago.pagado = True
     pago.save()
 
-    if not pago.producto or not pago.usuario:
+    if not pago.usuario:
         return HttpResponse(status=200)
 
-    try:
-        precio_unitario = (
-            Decimal(str(pago.monto)) / Decimal(str(pago.cantidad))
-            if pago.cantidad > 0 else Decimal(str(pago.monto))
-        )
-        pedido = Pedido.objects.create(
-            usuario=pago.usuario,
-            producto=pago.producto,
-            cantidad=pago.cantidad,
-            precio_unitario=precio_unitario,
-        )
-        logger.info(f"Pedido {pedido.id} creado: {pago.usuario.usuario} - {pago.producto.nombre}")
-    except Exception as e:
-        logger.error(f"Error creando Pedido: {e}", exc_info=True)
-        return HttpResponse(status=500)
+    precio_unitario = (
+        Decimal(str(pago.monto)) / Decimal(str(pago.cantidad))
+        if pago.cantidad > 0 else Decimal(str(pago.monto))
+    )
+
+    if pago.producto:
+        try:
+            pedido = Pedido.objects.create(
+                usuario=pago.usuario,
+                producto=pago.producto,
+                cantidad=pago.cantidad,
+                precio_unitario=precio_unitario,
+            )
+            logger.info(f"Pedido {pedido.id} creado: {pago.usuario.usuario} - {pago.producto.nombre}")
+        except Exception as e:
+            logger.error(f"Error creando Pedido: {e}", exc_info=True)
+            return HttpResponse(status=500)
+
+    elif pago.evento:
+        try:
+            entrada = Entrada.objects.create(
+                usuario=pago.usuario,
+                evento=pago.evento,
+                cantidad=pago.cantidad,
+                precio_unitario=precio_unitario,
+            )
+            logger.info(f"Entrada {entrada.id} creada: {pago.usuario.usuario} - {pago.evento.nombre}")
+        except Exception as e:
+            logger.error(f"Error creando Entrada: {e}", exc_info=True)
+            return HttpResponse(status=500)
 
     return HttpResponse(status=200)

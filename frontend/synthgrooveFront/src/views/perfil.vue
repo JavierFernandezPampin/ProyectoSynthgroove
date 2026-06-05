@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, defineAsyncComponent } from "vue";
 import { useAuthStore } from "@/stores/auth";
-import { getUserProfile, getPedidos, changePassword } from "@/services/userService";
-import type { UserProfile, Pedido } from "@/services/userService";
+import { getUserProfile, getPedidos, getEntradas, changePassword } from "@/services/userService";
+import type { UserProfile, Pedido, Entrada } from "@/services/userService";
 
 const AdminUsuarios = defineAsyncComponent(
   () => import("@/components/perfil/AdminUsuarios.vue")
@@ -17,6 +17,7 @@ const GestionContenido = defineAsyncComponent(
 const auth = useAuthStore();
 const userProfile = ref<UserProfile | null>(null);
 const pedidos = ref<Pedido[]>([]);
+const entradas = ref<Entrada[]>([]);
 const loading = ref(true);
 const error = ref("");
 
@@ -41,7 +42,10 @@ async function loadUserData() {
   try {
     userProfile.value = await getUserProfile(auth.access);
     if (userProfile.value?.rol === "suscriptor") {
-      pedidos.value = await getPedidos(auth.access);
+      [pedidos.value, entradas.value] = await Promise.all([
+        getPedidos(auth.access),
+        getEntradas(auth.access),
+      ]);
     }
   } catch (err: any) {
     error.value = err.message || "Error al cargar los datos del perfil";
@@ -85,6 +89,15 @@ function formatDate(dateStr: string): string {
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+  });
+}
+
+function formatEventDate(dateStr: string | null): string {
+  if (!dateStr) return "Fecha por confirmar";
+  return new Date(dateStr + "T00:00:00").toLocaleDateString("es-ES", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 }
 
@@ -234,6 +247,51 @@ onMounted(loadUserData);
                   <span class="detail-label">Total:</span>
                   <span class="detail-value">{{ euroFormatter.format(pedido.precio_unitario * pedido.cantidad) }}</span>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Suscriptor: mis entradas -->
+        <section v-if="userProfile.rol === 'suscriptor'" class="orders-section">
+          <h2 class="section-title">Mis Entradas</h2>
+
+          <div v-if="entradas.length === 0" class="empty-state">
+            <p>No tienes entradas aún</p>
+            <router-link to="/eventos" class="btn-secondary">
+              Ver Eventos
+            </router-link>
+          </div>
+
+          <div v-else class="entradas-list">
+            <div v-for="entrada in entradas" :key="entrada.id" class="ticket-card">
+              <div class="ticket-left">
+                <div class="ticket-brand">SYNTHGROOVE COLLECTIVE</div>
+                <div class="ticket-event">{{ entrada.evento_nombre }}</div>
+                <div class="ticket-meta">
+                  <span>{{ formatEventDate(entrada.evento_fecha) }}</span>
+                  <span class="ticket-sep">·</span>
+                  <span>{{ entrada.evento_localizacion }}</span>
+                </div>
+                <div class="ticket-divider"></div>
+                <div class="ticket-holder">
+                  <div class="ticket-holder-row">
+                    <span class="ticket-holder-label">Titular</span>
+                    <span class="ticket-holder-value">{{ entrada.usuario_nombre }}</span>
+                  </div>
+                  <div class="ticket-holder-row">
+                    <span class="ticket-holder-label">Email</span>
+                    <span class="ticket-holder-value">{{ entrada.usuario_mail }}</span>
+                  </div>
+                  <div class="ticket-holder-row">
+                    <span class="ticket-holder-label">Cantidad</span>
+                    <span class="ticket-holder-value">{{ entrada.cantidad }} entrada{{ entrada.cantidad > 1 ? 's' : '' }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="ticket-right">
+                <span class="ticket-num">#{{ String(entrada.id).padStart(5, '0') }}</span>
+                <span class="ticket-price">{{ euroFormatter.format(entrada.precio_unitario * entrada.cantidad) }}</span>
               </div>
             </div>
           </div>
@@ -576,6 +634,111 @@ section {
   margin: 0;
 }
 
+.entradas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ticket-card {
+  display: flex;
+  border: 1px solid #333;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #111;
+}
+
+.ticket-left {
+  flex: 1;
+  padding: 1.25rem 1.5rem;
+  border-right: 1px dashed #333;
+}
+
+.ticket-brand {
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 0.6rem;
+}
+
+.ticket-event {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #f7f1e8;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ticket-meta {
+  font-size: 0.82rem;
+  color: #888;
+  margin-bottom: 1rem;
+}
+
+.ticket-sep {
+  margin: 0 0.4rem;
+}
+
+.ticket-divider {
+  width: 100%;
+  height: 1px;
+  background: #2a2a2a;
+  margin-bottom: 1rem;
+}
+
+.ticket-holder {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ticket-holder-row {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.82rem;
+}
+
+.ticket-holder-label {
+  color: #555;
+  min-width: 60px;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  padding-top: 1px;
+}
+
+.ticket-holder-value {
+  color: #ccc;
+}
+
+.ticket-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 1.25rem;
+  gap: 0.5rem;
+  min-width: 90px;
+  background: #0d0d0d;
+}
+
+.ticket-num {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: #555;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+}
+
+.ticket-price {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #f7f1e8;
+}
+
 @media (max-width: 720px) {
   .perfil-wrapper {
     padding: 1rem 0.5rem 2rem;
@@ -611,6 +774,11 @@ section {
 
   .no-auth-title {
     font-size: 1.5rem;
+  }
+
+  .ticket-right {
+    min-width: 70px;
+    padding: 1rem 0.75rem;
   }
 }
 </style>

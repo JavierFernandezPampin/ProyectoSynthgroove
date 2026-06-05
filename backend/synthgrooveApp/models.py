@@ -148,6 +148,17 @@ class Pedido(models.Model):
 
 
 # Modelo para registrar pagos de Stripe
+class Entrada(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="entradas")
+    evento = models.ForeignKey(Evento, on_delete=models.CASCADE, related_name="entradas")
+    cantidad = models.IntegerField(default=1)
+    precio_unitario = models.DecimalField(max_digits=8, decimal_places=2)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Entrada {self.id} - {self.usuario.usuario} - {self.evento.nombre}"
+
+
 class Pago(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True, blank=True, related_name="pagos")
     producto = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True, blank=True, related_name="pagos")

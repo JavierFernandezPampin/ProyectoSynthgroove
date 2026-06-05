@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Artista, Release, Podcast, Evento, Producto, Usuario, Pedido
+from .models import Artista, Release, Podcast, Evento, Producto, Usuario, Pedido, Entrada
 import cloudinary
 
 
@@ -55,6 +55,23 @@ class ArtistaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Artista
         fields = "__all__"
+
+
+class EntradaSerializer(serializers.ModelSerializer):
+    evento_nombre = serializers.CharField(source='evento.nombre', read_only=True)
+    evento_fecha = serializers.DateField(source='evento.fecha_release', read_only=True)
+    evento_localizacion = serializers.CharField(source='evento.localizacion', read_only=True)
+    evento_imagen = serializers.SerializerMethodField()
+    usuario_nombre = serializers.CharField(source='usuario.usuario', read_only=True)
+    usuario_mail = serializers.EmailField(source='usuario.mail', read_only=True)
+
+    def get_evento_imagen(self, obj):
+        return _cloudinary_https(obj.evento.imagen if obj.evento else None)
+
+    class Meta:
+        model = Entrada
+        fields = ['id', 'usuario', 'usuario_nombre', 'usuario_mail', 'evento', 'evento_nombre',
+                  'evento_fecha', 'evento_localizacion', 'evento_imagen', 'cantidad', 'precio_unitario', 'fecha']
 
 
 class UsuarioSerializer(serializers.ModelSerializer):

@@ -13,6 +13,7 @@ from synthgrooveApp.views import (
     UsuariosAdminAPIView,
     ProductoDetailAPI,
     PedidosAdminAPIView,
+    EntradasAPIView,
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.conf import settings
@@ -43,6 +44,7 @@ urlpatterns = [
     path("api/auth/refresh/", TokenRefreshView.as_view(), name="api_token_refresh"),
 
     path("api/pedidos/", PedidosAPIView.as_view(), name="api_pedidos"),
+    path("api/entradas/", EntradasAPIView.as_view(), name="api_entradas"),
 
     path("api/admin/usuarios/", UsuariosAdminAPIView.as_view(), name="api_admin_usuarios"),
     path("api/admin/usuarios/<int:pk>/", UsuariosAdminAPIView.as_view(), name="api_admin_usuario_detail"),
