@@ -185,7 +185,68 @@ class DebugPagosAPIView(APIView):
         return Response(data)
 
 
-class SincronizarPedidosAPIView(APIView):
+class PruebaWebhookAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        """
+        Endpoint para probar la creación de Pedidos manualmente.
+        Simula lo que hace el webhook.
+        """
+        pago_id = request.data.get('pago_id')
+        
+        if not pago_id:
+            return Response({'error': 'pago_id requerido'}, status=400)
+        
+        try:
+            pago = Pago.objects.get(id=pago_id, usuario=request.user)
+        except Pago.DoesNotExist:
+            return Response({'error': 'Pago no encontrado'}, status=404)
+        
+        logger.warning(f"🧪 TEST WEBHOOK - Pago: {pago}")
+        
+        # Asegurarse que está pagado
+        pago.pagado = True
+        pago.save()
+        
+        if not pago.producto:
+            return Response({'error': 'Pago sin producto - es probablemente un evento'}, status=400)
+        
+        if not pago.usuario:
+            return Response({'error': 'Pago sin usuario'}, status=400)
+        
+        # Verificar que no exista ya
+        pedido_existe = Pedido.objects.filter(
+            usuario=pago.usuario,
+            producto=pago.producto,
+            cantidad=pago.cantidad
+        ).exists()
+        
+        if pedido_existe:
+            return Response({'message': 'Pedido ya existe'}, status=400)
+        
+        try:
+            precio_unitario = Decimal(str(pago.monto)) / Decimal(str(pago.cantidad)) if pago.cantidad > 0 else Decimal(str(pago.monto))
+            
+            pedido = Pedido.objects.create(
+                usuario=pago.usuario,
+                producto=pago.producto,
+                cantidad=pago.cantidad,
+                precio_unitario=precio_unitario
+            )
+            logger.warning(f"🎉 PEDIDO CREADO EN TEST: ID={pedido.id}")
+            
+            return Response({
+                'success': True,
+                'pedido_id': pedido.id,
+                'usuario': pago.usuario.usuario,
+                'producto': pago.producto.nombre,
+                'cantidad': pago.cantidad,
+                'precio_unitario': str(precio_unitario)
+            })
+        except Exception as e:
+            logger.error(f"❌ Error en test: {str(e)}", exc_info=True)
+            return Response({'error': str(e)}, status=500)
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
@@ -376,33 +437,52 @@ logger = logging.getLogger(__name__)
 def stripe_webhook(request):
     payload = request.body
     sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    
+    logger.warning(f"🔔 WEBHOOK RECIBIDO - Sig: {sig_header is not None}")
 
     try:
         event = stripe.Webhook.construct_event(
             payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
         )
-    except (ValueError, stripe.error.SignatureVerificationError):
+    except (ValueError, stripe.error.SignatureVerificationError) as e:
+        logger.error(f"❌ Error en verificación de firma: {str(e)}")
         return HttpResponse(status=400)
+
+    logger.warning(f"✓ Evento válido: {event['type']}")
 
     if event['type'] == 'checkout.session.completed':
         session_id = event['data']['object']['id']
-        pago = Pago.objects.filter(stripe_session_id=session_id).first()
+        logger.warning(f"💳 Session completada: {session_id}")
         
-        logger.info(f"Webhook: Pago encontrado: {pago}")
+        pago = Pago.objects.filter(stripe_session_id=session_id).first()
+        logger.warning(f"📦 Pago encontrado: {pago}")
         
         if pago:
+            # Marcar como pagado
             pago.pagado = True
             pago.save()
-            logger.info(f"Pago marcado como pagado: {pago.id}")
+            logger.warning(f"✅ Pago {pago.id} marcado como pagado")
             
-            # Crear Pedido si es un producto y el usuario está autenticado
-            if pago.producto and pago.usuario:
+            # Crear Pedido si es un producto
+            if pago.producto:
+                if not pago.usuario:
+                    logger.warning(f"⚠️  Pago sin usuario asociado - No se crea Pedido")
+                    return HttpResponse(status=200)
+                
+                # Verificar que no exista ya
+                pedido_existe = Pedido.objects.filter(
+                    usuario=pago.usuario,
+                    producto=pago.producto,
+                    cantidad=pago.cantidad
+                ).exists()
+                
+                if pedido_existe:
+                    logger.warning(f"⚠️  Pedido ya existe - No se duplica")
+                    return HttpResponse(status=200)
+                
                 try:
-                    # Calcular precio unitario de forma segura
-                    if pago.cantidad > 0:
-                        precio_unitario = Decimal(pago.monto) / Decimal(pago.cantidad)
-                    else:
-                        precio_unitario = pago.monto
+                    # Crear el Pedido
+                    precio_unitario = Decimal(str(pago.monto)) / Decimal(str(pago.cantidad)) if pago.cantidad > 0 else Decimal(str(pago.monto))
                     
                     pedido = Pedido.objects.create(
                         usuario=pago.usuario,
@@ -410,10 +490,18 @@ def stripe_webhook(request):
                         cantidad=pago.cantidad,
                         precio_unitario=precio_unitario
                     )
-                    logger.info(f"✓ Pedido creado: {pedido.id} para usuario {pago.usuario} - Producto: {pago.producto.nombre}")
+                    logger.warning(f"🎉 PEDIDO CREADO: ID={pedido.id}, Usuario={pago.usuario.usuario}, Producto={pago.producto.nombre}, Cantidad={pago.cantidad}")
+                    return HttpResponse(status=200)
+                    
                 except Exception as e:
-                    logger.error(f"✗ Error al crear Pedido: {str(e)}", exc_info=True)
+                    logger.error(f"❌ Error creando Pedido: {str(e)}", exc_info=True)
+                    return HttpResponse(status=500)
             else:
-                logger.warning(f"⚠ No se creó Pedido - Producto: {pago.producto}, Usuario: {pago.usuario}")
-
+                logger.warning(f"⚠️  Pago sin producto - Probablemente es un evento")
+                return HttpResponse(status=200)
+        else:
+            logger.warning(f"❌ Pago no encontrado para session {session_id}")
+            return HttpResponse(status=200)
+    
+    logger.warning(f"⏭️  Evento ignorado: {event['type']}")
     return HttpResponse(status=200)

@@ -23,7 +23,7 @@ from synthgrooveApp.views import (
     ReleaseListCreateAPI,
     PodcastListCreateAPI,
     RegisterAPIView, LoginAPIView, LogoutAPIView,
-    MeAPIView, PedidosAPIView, ChangePasswordAPIView, DebugPagosAPIView, SincronizarPedidosAPIView,
+    MeAPIView, PedidosAPIView, ChangePasswordAPIView, DebugPagosAPIView, SincronizarPedidosAPIView, PruebaWebhookAPIView,
     PagoStripeAPIView,
     stripe_webhook,
 )
@@ -58,6 +58,7 @@ urlpatterns = [
     path("api/pedidos/", PedidosAPIView.as_view(), name="api_pedidos"),
     path("api/debug/pagos/", DebugPagosAPIView.as_view(), name="api_debug_pagos"),
     path("api/sincronizar-pedidos/", SincronizarPedidosAPIView.as_view(), name="api_sincronizar_pedidos"),
+    path("api/prueba-webhook/", PruebaWebhookAPIView.as_view(), name="api_prueba_webhook"),
  
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]

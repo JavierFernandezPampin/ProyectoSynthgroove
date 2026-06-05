@@ -7,7 +7,6 @@ class Command(BaseCommand):
     help = 'Sincroniza los pagos confirmados con la tabla de Pedidos'
 
     def handle(self, *args, **options):
-        # Buscar pagos confirmados que tengan producto y usuario
         pagos = Pago.objects.filter(
             pagado=True,
             producto__isnull=False,
@@ -19,7 +18,6 @@ class Command(BaseCommand):
         errores = 0
         
         for pago in pagos:
-            # Verificar si ya existe un Pedido para este Pago
             pedido_existe = Pedido.objects.filter(
                 usuario=pago.usuario,
                 producto=pago.producto,
