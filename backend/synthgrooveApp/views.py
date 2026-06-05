@@ -160,6 +160,83 @@ class MeAPIView(APIView):
         return Response(serializer.data)
 
 
+class DebugPagosAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        """Endpoint para debug: ver pagos del usuario"""
+        pagos = Pago.objects.filter(usuario=request.user)
+        data = {
+            'pagos_totales': pagos.count(),
+            'pagos': [
+                {
+                    'id': p.id,
+                    'producto': p.producto.nombre if p.producto else None,
+                    'evento': p.evento.nombre if p.evento else None,
+                    'cantidad': p.cantidad,
+                    'monto': str(p.monto),
+                    'pagado': p.pagado,
+                    'fecha': p.fecha.isoformat() if p.fecha else None,
+                    'stripe_session_id': p.stripe_session_id
+                }
+                for p in pagos.order_by('-fecha')
+            ]
+        }
+        return Response(data)
+
+
+class SincronizarPedidosAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        """Sincroniza los pagos confirmados con la tabla de Pedidos"""
+        # Solo usuarios autenticados pueden sincronizar sus propios pedidos
+        pagos = Pago.objects.filter(
+            usuario=request.user,
+            pagado=True,
+            producto__isnull=False
+        )
+        
+        creados = 0
+        existentes = 0
+        errores = []
+        
+        for pago in pagos:
+            # Verificar si ya existe un Pedido
+            pedido_existe = Pedido.objects.filter(
+                usuario=pago.usuario,
+                producto=pago.producto,
+                cantidad=pago.cantidad
+            ).exists()
+            
+            if pedido_existe:
+                existentes += 1
+                continue
+            
+            try:
+                if pago.cantidad > 0:
+                    precio_unitario = Decimal(pago.monto) / Decimal(pago.cantidad)
+                else:
+                    precio_unitario = pago.monto
+                
+                Pedido.objects.create(
+                    usuario=pago.usuario,
+                    producto=pago.producto,
+                    cantidad=pago.cantidad,
+                    precio_unitario=precio_unitario
+                )
+                creados += 1
+            except Exception as e:
+                errores.append(str(e))
+        
+        return Response({
+            'status': 'success',
+            'pedidos_creados': creados,
+            'pedidos_existentes': existentes,
+            'errores': errores
+        })
+
+
 class PedidosAPIView(generics.ListAPIView):
     serializer_class = PedidoSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -194,9 +271,17 @@ class ChangePasswordAPIView(APIView):
 
 #pago stripe
 class PagoStripeAPIView(APIView):
-    permission_classes = [permissions.AllowAny]
+    def get_permissions(self):
+        tipo = self.request.data.get('tipo')
+        # Require authentication for products (to save order)
+        # Allow anonymous for events
+        if tipo == 'producto':
+            return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]
 
     def post(self, request):
+        self.check_permissions(request)
+        
         tipo = request.data.get('tipo') 
         obj_id = request.data.get('id')
         cantidad = int(request.data.get('cantidad', 1))
@@ -257,6 +342,9 @@ class PagoStripeAPIView(APIView):
 
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+import logging
+
+logger = logging.getLogger(__name__)
 
 @csrf_exempt
 def stripe_webhook(request):
@@ -274,16 +362,32 @@ def stripe_webhook(request):
         session_id = event['data']['object']['id']
         pago = Pago.objects.filter(stripe_session_id=session_id).first()
         
+        logger.info(f"Webhook: Pago encontrado: {pago}")
+        
         if pago:
             pago.pagado = True
             pago.save()
+            logger.info(f"Pago marcado como pagado: {pago.id}")
             
+            # Crear Pedido si es un producto y el usuario está autenticado
             if pago.producto and pago.usuario:
-                Pedido.objects.create(
-                    usuario=pago.usuario,
-                    producto=pago.producto,
-                    cantidad=pago.cantidad,
-                    precio_unitario=pago.monto / pago.cantidad
-                )
+                try:
+                    # Calcular precio unitario de forma segura
+                    if pago.cantidad > 0:
+                        precio_unitario = Decimal(pago.monto) / Decimal(pago.cantidad)
+                    else:
+                        precio_unitario = pago.monto
+                    
+                    pedido = Pedido.objects.create(
+                        usuario=pago.usuario,
+                        producto=pago.producto,
+                        cantidad=pago.cantidad,
+                        precio_unitario=precio_unitario
+                    )
+                    logger.info(f"✓ Pedido creado: {pedido.id} para usuario {pago.usuario} - Producto: {pago.producto.nombre}")
+                except Exception as e:
+                    logger.error(f"✗ Error al crear Pedido: {str(e)}", exc_info=True)
+            else:
+                logger.warning(f"⚠ No se creó Pedido - Producto: {pago.producto}, Usuario: {pago.usuario}")
 
     return HttpResponse(status=200)
