@@ -209,8 +209,8 @@ class PagoStripeAPIView(APIView):
                     'quantity': cantidad,
                 }],
                 mode='payment',
-                success_url=f'{settings.FRONTEND_URL}/compra-exitosa',
-                cancel_url=f'{settings.FRONTEND_URL}/compra-cancelada',
+                success_url=f'{settings.FRONTEND_URL}/#/compra-exitosa',
+                cancel_url=f'{settings.FRONTEND_URL}/#/compra-cancelada',
             )
 
             Pago.objects.create(
