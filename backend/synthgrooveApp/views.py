@@ -236,7 +236,7 @@ class PagoStripeAPIView(APIView):
                     'quantity': cantidad,
                 }],
                 mode='payment',
-                success_url=f'{settings.FRONTEND_URL}/compra-exitosa?session_id={{CHECKOUT_SESSION_ID}}',
+                success_url=f'{settings.FRONTEND_URL}/',
                 cancel_url=f'{settings.FRONTEND_URL}/compra-cancelada',
             )
 
@@ -272,6 +272,18 @@ def stripe_webhook(request):
 
     if event['type'] == 'checkout.session.completed':
         session_id = event['data']['object']['id']
-        Pago.objects.filter(stripe_session_id=session_id).update(pagado=True)
+        pago = Pago.objects.filter(stripe_session_id=session_id).first()
+        
+        if pago:
+            pago.pagado = True
+            pago.save()
+            
+            if pago.producto and pago.usuario:
+                Pedido.objects.create(
+                    usuario=pago.usuario,
+                    producto=pago.producto,
+                    cantidad=pago.cantidad,
+                    precio_unitario=pago.monto / pago.cantidad
+                )
 
     return HttpResponse(status=200)
