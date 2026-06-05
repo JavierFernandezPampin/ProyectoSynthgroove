@@ -82,6 +82,10 @@
 }
 
 @media (max-width: 720px) {
+  .hero-video {
+    width: 90%;
+  }
+
   .hero-title {
     padding: 1.5rem;
     letter-spacing: 0.05em;
