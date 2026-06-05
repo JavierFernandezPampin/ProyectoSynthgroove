@@ -2,7 +2,14 @@ from rest_framework import serializers
 from .models import Artista, Release, Podcast, Evento, Producto, Usuario, Pedido
 import cloudinary
 
-#el serializer sirve para convertir los datos a json y poder leerlos en la web y viceversa
+
+def _cloudinary_https(imagen):
+    if not imagen:
+        return None
+    url = cloudinary.utils.cloudinary_url(str(imagen))[0]
+    return url.replace("http://", "https://")
+
+
 class ReleaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Release
@@ -19,27 +26,23 @@ class EventoSerializer(serializers.ModelSerializer):
     imagen = serializers.SerializerMethodField()
 
     def get_imagen(self, obj):
-        if obj.imagen:
-            url = cloudinary.utils.cloudinary_url(str(obj.imagen))[0]
-            return url.replace("http://", "https://")
-        return None
+        return _cloudinary_https(obj.imagen)
 
     class Meta:
         model = Evento
         fields = "__all__"
 
+
 class ProductoSerializer(serializers.ModelSerializer):
     imagen = serializers.SerializerMethodField()
 
     def get_imagen(self, obj):
-        if obj.imagen:
-            url = cloudinary.utils.cloudinary_url(str(obj.imagen))[0]
-            return url.replace("http://", "https://")   
-        return None
+        return _cloudinary_https(obj.imagen)
 
     class Meta:
         model = Producto
         fields = "__all__"
+
 
 class ArtistaSerializer(serializers.ModelSerializer):
     podcasts = PodcastSerializer(many=True, read_only=True)
@@ -47,10 +50,7 @@ class ArtistaSerializer(serializers.ModelSerializer):
     imagen = serializers.SerializerMethodField()
 
     def get_imagen(self, obj):
-        if obj.imagen:
-            url = cloudinary.utils.cloudinary_url(str(obj.imagen))[0]
-            return url.replace("http://", "https://")
-        return None
+        return _cloudinary_https(obj.imagen)
 
     class Meta:
         model = Artista
@@ -68,12 +68,8 @@ class PedidoSerializer(serializers.ModelSerializer):
     producto_imagen = serializers.SerializerMethodField()
 
     def get_producto_imagen(self, obj):
-        if obj.producto and obj.producto.imagen:
-            url = cloudinary.utils.cloudinary_url(str(obj.producto.imagen))[0]
-            return url.replace("http://", "https://")
-        return None
+        return _cloudinary_https(obj.producto.imagen if obj.producto else None)
 
     class Meta:
         model = Pedido
         fields = ['id', 'producto', 'producto_nombre', 'producto_imagen', 'cantidad', 'precio_unitario', 'fecha']
-
