@@ -23,25 +23,25 @@ class PodcastSerializer(serializers.ModelSerializer):
 
 
 class EventoSerializer(serializers.ModelSerializer):
-    imagen = serializers.SerializerMethodField()
-
-    def get_imagen(self, obj):
-        return _cloudinary_https(obj.imagen)
-
     class Meta:
         model = Evento
         fields = "__all__"
 
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['imagen'] = _cloudinary_https(instance.imagen)
+        return ret
+
 
 class ProductoSerializer(serializers.ModelSerializer):
-    imagen = serializers.SerializerMethodField()
-
-    def get_imagen(self, obj):
-        return _cloudinary_https(obj.imagen)
-
     class Meta:
         model = Producto
         fields = "__all__"
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['imagen'] = _cloudinary_https(instance.imagen)
+        return ret
 
 
 class ArtistaSerializer(serializers.ModelSerializer):

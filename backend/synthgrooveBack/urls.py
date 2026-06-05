@@ -11,6 +11,7 @@ from synthgrooveApp.views import (
     PagoStripeAPIView,
     stripe_webhook,
     UsuariosAdminAPIView,
+    ProductoDetailAPI,
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.conf import settings
@@ -25,6 +26,7 @@ urlpatterns = [
     path("api/eventos/<int:pk>/", EventoDetailAPI.as_view(), name="api_evento_detail"),
 
     path("api/productos/", ProductoListCreateAPI.as_view(), name="api_productos"),
+    path("api/productos/<int:pk>/", ProductoDetailAPI.as_view(), name="api_producto_detail"),
     path("api/pago/stripe/", PagoStripeAPIView.as_view(), name="api_pago_stripe"),
     path("api/webhook/", stripe_webhook, name="api_stripe_webhook"),
 

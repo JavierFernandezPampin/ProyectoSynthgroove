@@ -185,6 +185,12 @@ class UsuariosAdminAPIView(APIView):
         return Response(status=204)
 
 
+class ProductoDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Producto.objects.all()
+    serializer_class = ProductoSerializer
+    permission_classes = [EsGestorOAdmin]
+
+
 class PagoStripeAPIView(APIView):
     def get_permissions(self):
         if self.request.data.get('tipo') == 'producto':
