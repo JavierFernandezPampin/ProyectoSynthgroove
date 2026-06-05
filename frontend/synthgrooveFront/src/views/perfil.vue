@@ -63,7 +63,7 @@ async function handleChangePassword() {
 
   changingPassword.value = true;
   try {
-    await changePassword(auth.access, oldPassword.value, newPassword.value);
+await changePassword(auth.access ?? "", oldPassword.value, newPassword.value);
     passwordSuccess.value = "Contraseña cambiada exitosamente";
     oldPassword.value = "";
     newPassword.value = "";
