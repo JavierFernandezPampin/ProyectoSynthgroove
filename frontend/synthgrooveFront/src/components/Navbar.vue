@@ -54,11 +54,11 @@ async function handleLogout() {
 
       <div class="brand-spacer">
         <router-link
-          v-if="auth.isAuthenticated"
           to="/perfil"
           class="profile-icon"
-          aria-label="Ir a mi perfil"
-          title="Mi perfil"
+          :class="{ 'profile-icon--guest': !auth.isAuthenticated }"
+          :aria-label="auth.isAuthenticated ? 'Ir a mi perfil' : 'Inicia sesión para ver tu perfil'"
+          :title="auth.isAuthenticated ? 'Mi perfil' : 'Inicia sesión para ver tu perfil'"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -164,6 +164,14 @@ async function handleLogout() {
     border-color 0.2s ease,
     background 0.2s ease,
     transform 0.2s ease;
+}
+
+.profile-icon--guest {
+  opacity: 0.4;
+}
+
+.profile-icon--guest:hover {
+  opacity: 1;
 }
 
 .profile-icon:hover {
