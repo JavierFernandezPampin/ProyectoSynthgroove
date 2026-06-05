@@ -5,6 +5,8 @@ import {
   getUserProfile,
   getPedidos,
   changePassword,
+  getUsuarios,
+  deleteUsuario,
 } from "@/services/userService";
 import type { UserProfile, Pedido } from "@/services/userService";
 
@@ -13,6 +15,32 @@ const userProfile = ref<UserProfile | null>(null);
 const pedidos = ref<Pedido[]>([]);
 const loading = ref(true);
 const error = ref("");
+
+// Admin
+const usuarios = ref<UserProfile[]>([]);
+const deletingId = ref<number | null>(null);
+
+async function loadUsuarios() {
+  if (!auth.access) return;
+  try {
+    usuarios.value = await getUsuarios(auth.access);
+  } catch {
+    error.value = "Error al cargar los usuarios";
+  }
+}
+
+async function handleDeleteUsuario(id: number) {
+  if (!auth.access) return;
+  deletingId.value = id;
+  try {
+    await deleteUsuario(auth.access, id);
+    usuarios.value = usuarios.value.filter((u) => u.id !== id);
+  } catch {
+    error.value = "Error al eliminar el usuario";
+  } finally {
+    deletingId.value = null;
+  }
+}
 
 // Form states
 const showChangePasswordForm = ref(false);
@@ -37,7 +65,11 @@ async function loadUserData() {
 
   try {
     userProfile.value = await getUserProfile(auth.access);
-    pedidos.value = await getPedidos(auth.access);
+    if (userProfile.value?.rol === "admin") {
+      await loadUsuarios();
+    } else {
+      pedidos.value = await getPedidos(auth.access);
+    }
   } catch (err: any) {
     error.value = err.message || "Error al cargar los datos del perfil";
   } finally {
@@ -223,8 +255,46 @@ onMounted(() => {
           </div>
         </section>
 
-        <!-- Sección de pedidos -->
-        <section class="orders-section">
+        <!-- Panel admin: lista de usuarios -->
+        <section v-if="userProfile.rol === 'admin'" class="orders-section">
+          <h2 class="section-title">Gestión de Usuarios</h2>
+
+          <div v-if="usuarios.length === 0" class="empty-state">
+            <p>No hay usuarios registrados</p>
+          </div>
+
+          <div v-else class="admin-users-table">
+            <div class="admin-table-header">
+              <span>Usuario</span>
+              <span>Email</span>
+              <span>Rol</span>
+              <span></span>
+            </div>
+            <div
+              v-for="u in usuarios"
+              :key="u.id"
+              class="admin-table-row"
+            >
+              <span class="admin-cell">{{ u.usuario }}</span>
+              <span class="admin-cell admin-cell-email">{{ u.mail }}</span>
+              <span class="admin-cell">
+                <span class="rol-badge">{{ u.rol }}</span>
+              </span>
+              <span class="admin-cell admin-cell-action">
+                <button
+                  class="btn-delete"
+                  :disabled="deletingId === u.id"
+                  @click="handleDeleteUsuario(u.id)"
+                >
+                  {{ deletingId === u.id ? "Eliminando..." : "Eliminar" }}
+                </button>
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Sección de pedidos (suscriptores/gestores) -->
+        <section v-else class="orders-section">
           <h2 class="section-title">Mis Pedidos</h2>
 
           <div v-if="pedidos.length === 0" class="empty-state">
@@ -605,6 +675,110 @@ section {
 
 .detail-item.total .detail-value {
   color: #f7f1e8;
+}
+
+/* Admin tabla */
+.admin-users-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid #333;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.admin-table-header {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 0.7fr 120px;
+  padding: 0.75rem 1rem;
+  background: #111;
+  color: #999;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid #333;
+}
+
+.admin-table-row {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 0.7fr 120px;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #222;
+  align-items: center;
+  transition: background 0.15s;
+}
+
+.admin-table-row:last-child {
+  border-bottom: none;
+}
+
+.admin-table-row:hover {
+  background: #111;
+}
+
+.admin-cell {
+  color: #f7f1e8;
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-cell-email {
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.admin-cell-action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.rol-badge {
+  background: rgba(247, 241, 232, 0.08);
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-delete {
+  background: transparent;
+  border: 1px solid #e05252;
+  color: #e05252;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-delete:hover:not(:disabled) {
+  background: rgba(224, 82, 82, 0.1);
+}
+
+.btn-delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .admin-table-header {
+    grid-template-columns: 1fr 0.7fr 100px;
+  }
+
+  .admin-table-row {
+    grid-template-columns: 1fr 0.7fr 100px;
+  }
+
+  .admin-cell-email {
+    display: none;
+  }
 }
 
 /* Error container */

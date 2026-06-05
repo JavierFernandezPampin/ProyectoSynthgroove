@@ -39,6 +39,22 @@ export const getPedidos = async (token: string): Promise<Pedido[]> => {
   return response.json();
 };
 
+export const getUsuarios = async (token: string): Promise<UserProfile[]> => {
+  const response = await fetch(`${API_URL}/api/admin/usuarios/`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error("Error al cargar los usuarios");
+  return response.json();
+};
+
+export const deleteUsuario = async (token: string, id: number): Promise<void> => {
+  const response = await fetch(`${API_URL}/api/admin/usuarios/${id}/`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error("Error al eliminar el usuario");
+};
+
 export const changePassword = async (
   token: string,
   oldPassword: string,

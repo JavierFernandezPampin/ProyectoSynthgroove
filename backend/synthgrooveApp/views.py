@@ -163,6 +163,28 @@ class PedidosAPIView(generics.ListAPIView):
         return Pedido.objects.filter(usuario=self.request.user).order_by('-fecha')
 
 
+class EsAdmin(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.rol == 'admin'
+
+
+class UsuariosAdminAPIView(APIView):
+    permission_classes = [EsAdmin]
+
+    def get(self, request):
+        usuarios = Usuario.objects.exclude(rol='admin').order_by('usuario')
+        data = UsuarioSerializer(usuarios, many=True).data
+        return Response(data)
+
+    def delete(self, request, pk):
+        try:
+            usuario = Usuario.objects.exclude(rol='admin').get(pk=pk)
+        except Usuario.DoesNotExist:
+            return Response({'error': 'Usuario no encontrado'}, status=404)
+        usuario.delete()
+        return Response(status=204)
+
+
 class PagoStripeAPIView(APIView):
     def get_permissions(self):
         if self.request.data.get('tipo') == 'producto':
