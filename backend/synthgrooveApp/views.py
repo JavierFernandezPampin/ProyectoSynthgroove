@@ -6,13 +6,15 @@ from rest_framework import generics, permissions
 from django.conf import settings
 from decimal import Decimal, ROUND_HALF_UP
 import stripe
-from .models import Artista, Evento, Producto, Release, Podcast, Usuario, Pago
+from .models import Artista, Evento, Producto, Release, Podcast, Usuario, Pago, Pedido
 from .serializers import (
     ArtistaSerializer,
     EventoSerializer,
     ProductoSerializer,
     ReleaseSerializer,
-    PodcastSerializer
+    PodcastSerializer,
+    UsuarioSerializer,
+    PedidoSerializer
 )
 # Create your views here.
 
@@ -148,6 +150,45 @@ class LogoutAPIView(APIView):
             return Response({"message": "Sesión cerrada correctamente."})
         except Exception:
             return Response({"error": "Token inválido."}, status=400)
+
+
+class MeAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        serializer = UsuarioSerializer(request.user)
+        return Response(serializer.data)
+
+
+class PedidosAPIView(generics.ListAPIView):
+    serializer_class = PedidoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Pedido.objects.filter(usuario=self.request.user).order_by('-fecha')
+
+
+class ChangePasswordAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        old_password = request.data.get("old_password")
+        new_password = request.data.get("new_password")
+
+        if not old_password or not new_password:
+            return Response({"error": "Todos los campos son obligatorios."}, status=400)
+
+        user = request.user
+        if not user.check_password(old_password):
+            return Response({"error": "La contraseña actual es incorrecta."}, status=400)
+
+        if len(new_password) < 6:
+            return Response({"error": "La contraseña debe tener al menos 6 caracteres."}, status=400)
+
+        user.set_password(new_password)
+        user.save()
+
+        return Response({"message": "Contraseña cambiada exitosamente."})
         
 
 

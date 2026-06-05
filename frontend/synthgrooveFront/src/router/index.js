@@ -16,12 +16,13 @@ const router = createRouter({
     { path: "/registro", component: () => import("@/components/Register.vue") },
     {
       path: "/compra-exitosa",
-      component: () => import("@/views/compra-exitosa.vue"),
+      component: () => import("@/views/home.vue"),
     },
     {
       path: "/compra-cancelada",
-      component: () => import("@/views/compra-cancelada.vue"),
+      component: () => import("@/views/home.vue"),
     },
+    { path: "/perfil", component: () => import("@/views/perfil.vue") },
   ],
 });
 

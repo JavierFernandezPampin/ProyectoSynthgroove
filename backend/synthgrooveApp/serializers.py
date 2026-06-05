@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Artista, Release, Podcast, Evento, Producto
+from .models import Artista, Release, Podcast, Evento, Producto, Usuario, Pedido
 import cloudinary
 
 #el serializer sirve para convertir los datos a json y poder leerlos en la web y viceversa
@@ -55,3 +55,25 @@ class ArtistaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Artista
         fields = "__all__"
+
+
+class UsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Usuario
+        fields = ['id', 'usuario', 'nombre', 'apellido', 'mail', 'rol']
+
+
+class PedidoSerializer(serializers.ModelSerializer):
+    producto_nombre = serializers.CharField(source='producto.nombre', read_only=True)
+    producto_imagen = serializers.SerializerMethodField()
+
+    def get_producto_imagen(self, obj):
+        if obj.producto and obj.producto.imagen:
+            url = cloudinary.utils.cloudinary_url(str(obj.producto.imagen))[0]
+            return url.replace("http://", "https://")
+        return None
+
+    class Meta:
+        model = Pedido
+        fields = ['id', 'producto', 'producto_nombre', 'producto_imagen', 'cantidad', 'precio_unitario', 'fecha']
+

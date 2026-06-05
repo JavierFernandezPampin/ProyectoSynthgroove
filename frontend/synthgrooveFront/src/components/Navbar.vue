@@ -28,7 +28,7 @@ async function handleLogout() {
     <div class="brand-top">
       <div class="nav-auth">
         <template v-if="auth.isAuthenticated">
-          <span class="nav-usuario">LOGIN AS: {{ auth.usuario }}</span>
+          <span class="nav-usuario">LOGGED AS: {{ auth.usuario }}</span>
           <button class="btn btn-outline-light btn-sm" @click="handleLogout">
             Cerrar sesion
           </button>
@@ -52,7 +52,28 @@ async function handleLogout() {
         />
       </router-link>
 
-      <div class="brand-spacer" aria-hidden="true"></div>
+      <div class="brand-spacer">
+        <router-link
+          v-if="auth.isAuthenticated"
+          to="/perfil"
+          class="profile-icon"
+          aria-label="Ir a mi perfil"
+          title="Mi perfil"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </router-link>
+      </div>
     </div>
 
     <nav class="section-nav" aria-label="Secciones principales">
@@ -123,6 +144,45 @@ async function handleLogout() {
 
 .brand-spacer {
   justify-self: end;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.profile-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  color: #8d8d8d;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.profile-icon:hover {
+  color: #f7f1e8;
+  border-color: #2d2d2d;
+  background: rgba(247, 241, 232, 0.05);
+  transform: scale(1.08);
+}
+
+.profile-icon:focus-visible {
+  outline: 2px solid #f7f1e8;
+  outline-offset: 2px;
+  color: #f7f1e8;
+}
+
+.profile-icon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  stroke-width: 2;
 }
 
 .section-nav {
@@ -204,7 +264,8 @@ async function handleLogout() {
   }
 
   .brand-spacer {
-    display: none;
+    order: 3;
+    margin-top: 0.5rem;
   }
 
   .section-nav {
