@@ -245,10 +245,10 @@ class PagoStripeAPIView(APIView):
 
         stripe.api_key = settings.STRIPE_SECRET_KEY
         es_autenticado = request.user.is_authenticated
-        precio_unitario = (
-            (obj.precio * DESCUENTO_AUTENTICADO).quantize(CENTIMO, rounding=ROUND_HALF_UP)
-            if es_autenticado else obj.precio
-        )
+        if tipo == 'producto' and es_autenticado:
+            precio_unitario = (obj.precio * DESCUENTO_AUTENTICADO).quantize(CENTIMO, rounding=ROUND_HALF_UP)
+        else:
+            precio_unitario = obj.precio
         monto_total = precio_unitario * cantidad
         unit_amount = int(
             (precio_unitario * CENTIMOS).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
