@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, permissions
 from django.conf import settings
+from django.utils import timezone
 from decimal import Decimal, ROUND_HALF_UP
 import logging
 import stripe
@@ -167,7 +168,13 @@ class EntradasAPIView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Entrada.objects.select_related('evento', 'usuario').filter(usuario=self.request.user).order_by('-fecha')
+        hoy = timezone.now().date()
+        return (
+            Entrada.objects
+            .select_related('evento', 'usuario')
+            .filter(usuario=self.request.user, evento__fecha_release__gte=hoy)
+            .order_by('-fecha')
+        )
 
 
 class EsAdmin(permissions.BasePermission):
