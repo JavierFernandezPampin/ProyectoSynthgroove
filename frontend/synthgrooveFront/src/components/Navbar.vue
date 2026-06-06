@@ -3,8 +3,7 @@ import { ref, watch } from "vue";
 import { useAuthStore } from "@/stores/auth.js";
 import { useRoute, useRouter } from "vue-router";
 
-const logoBlanco = new URL("../assets/img/logoBlanco.png", import.meta.url)
-  .href;
+const logoBlanco = new URL("../assets/img/logoBlanco.webp", import.meta.url).href;
 
 const auth = useAuthStore();
 const route = useRoute();
