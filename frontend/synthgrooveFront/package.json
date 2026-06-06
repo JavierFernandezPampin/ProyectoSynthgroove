@@ -11,7 +11,6 @@
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
-    "bootstrap": "^5.3.8",
     "pinia": "^3.0.4",
     "vue": "^3.5.30",
     "vue-router": "^5.0.6"

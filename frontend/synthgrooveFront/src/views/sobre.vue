@@ -47,7 +47,7 @@ onMounted(async () => {
       <div class="spinner"></div>
       <p>Cargando artistas...</p>
     </div>
-    <div v-else class="row g-0">
+    <div v-else class="artistas-seccion">
       <h2 class="titulo-artistas">ARTISTAS</h2>
       <div class="separador"></div>
 

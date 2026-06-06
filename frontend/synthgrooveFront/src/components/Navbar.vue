@@ -34,12 +34,12 @@ async function handleLogout() {
       <div class="nav-auth">
         <template v-if="auth.isAuthenticated">
           <span class="nav-usuario">LOGGED AS: {{ auth.usuario }}</span>
-          <button class="btn btn-outline-light btn-sm" @click="handleLogout">
+          <button class="nav-auth-btn" @click="handleLogout">
             Cerrar sesion
           </button>
         </template>
         <template v-else>
-          <router-link class="btn btn-outline-light btn-sm" to="/login">
+          <router-link class="nav-auth-btn" to="/login">
             Iniciar sesion
           </router-link>
         </template>
@@ -154,6 +154,28 @@ async function handleLogout() {
   gap: 0.85rem;
   flex-wrap: wrap;
   justify-self: start;
+}
+
+.nav-auth-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-family: inherit;
+  letter-spacing: 0.05em;
+  color: #f7f1e8;
+  background: transparent;
+  border: 1px solid #f7f1e8;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+
+.nav-auth-btn:hover {
+  color: #000;
+  background: #f7f1e8;
 }
 
 .nav-usuario {

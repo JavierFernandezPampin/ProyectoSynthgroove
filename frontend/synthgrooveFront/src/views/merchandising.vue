@@ -50,8 +50,8 @@ async function comprar(producto: Producto) {
       <div class="spinner"></div>
       <p>Cargando merchandising...</p>
     </div>
-    <div v-else class="row g-0">
-      <div class="col-md-6" v-for="producto in productos" :key="producto.id">
+    <div v-else class="productos-lista">
+      <div class="producto-col" v-for="producto in productos" :key="producto.id">
         <div class="producto-card">
           <img :src="producto.imagen" class="producto-img" />
           <div class="producto-info">
@@ -85,6 +85,17 @@ async function comprar(producto: Producto) {
   margin: 0 auto;
   padding: 3rem 1.5rem;
   background: #000;
+}
+
+.productos-lista {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 768px) {
+  .productos-lista {
+    grid-template-columns: 1fr;
+  }
 }
 
 .titulo-merch {
