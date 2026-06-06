@@ -165,7 +165,7 @@ async function handleLogout() {
   color: #f7f1e8;
   background: transparent;
   border: 1px solid #f7f1e8;
-  border-radius: 4px;
+  border-radius: 0;
   cursor: pointer;
   text-decoration: none;
   transition: color 0.2s, background 0.2s;
@@ -211,7 +211,7 @@ async function handleLogout() {
   width: 20px;
   height: 2px;
   background: #f7f1e8;
-  border-radius: 2px;
+  border-radius: 0;
   transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
@@ -285,7 +285,7 @@ async function handleLogout() {
   min-height: 2.5rem;
   padding: 0.65rem 1rem;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: 0;
   color: #8d8d8d;
   font-size: 0.76rem;
   font-weight: 600;
@@ -359,7 +359,7 @@ async function handleLogout() {
 
   .section-nav__link {
     width: 100%;
-    border-radius: 8px;
+    border-radius: 0;
     justify-content: center;
     min-height: 2.9rem;
     padding: 0.85rem 1.25rem;
