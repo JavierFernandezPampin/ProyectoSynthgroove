@@ -92,7 +92,7 @@ async function handleLogin() {
   padding: 2rem;
   background: #1a1a1a;
   border: 1px solid #333;
-  border-radius: 12px;
+  border-radius: 0;
 }
 .login-form h2 {
   color: #f7f1e8;

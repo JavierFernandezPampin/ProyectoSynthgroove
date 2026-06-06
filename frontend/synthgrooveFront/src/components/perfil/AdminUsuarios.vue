@@ -115,7 +115,7 @@ onMounted(load);
   display: flex;
   flex-direction: column;
   border: 1px solid #333;
-  border-radius: 8px;
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -170,7 +170,7 @@ onMounted(load);
 .rol-badge {
   background: rgba(247, 241, 232, 0.08);
   border: 1px solid #444;
-  border-radius: 4px;
+  border-radius: 0;
   padding: 0.2rem 0.5rem;
   font-size: 0.75rem;
   color: #aaa;
@@ -184,7 +184,7 @@ onMounted(load);
   color: #aaa;
   padding: 0.4rem 0.75rem;
   font-size: 0.8rem;
-  border-radius: 4px;
+  border-radius: 0;
   cursor: pointer;
   font-family: inherit;
   transition: all 0.2s;
@@ -207,7 +207,7 @@ onMounted(load);
   color: #e05252;
   padding: 0.4rem 0.85rem;
   font-size: 0.8rem;
-  border-radius: 4px;
+  border-radius: 0;
   cursor: pointer;
   font-family: inherit;
   transition: all 0.2s;

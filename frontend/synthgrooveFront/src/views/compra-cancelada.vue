@@ -28,7 +28,7 @@
   width: min(100%, 480px);
   background: #1a1a1a;
   border: 1px solid #333;
-  border-radius: 12px;
+  border-radius: 0;
   padding: 2.5rem 2rem;
   text-align: center;
   display: flex;
@@ -39,7 +39,7 @@
 .icono {
   width: 64px;
   height: 64px;
-  border-radius: 50%;
+  border-radius: 0;
   font-size: 1.75rem;
   line-height: 64px;
   margin: 0 auto;
@@ -77,7 +77,7 @@ p {
 .btn-secondary {
   display: block;
   padding: 0.75rem 1.5rem;
-  border-radius: 4px;
+  border-radius: 0;
   font-size: 0.85rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
