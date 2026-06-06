@@ -121,6 +121,9 @@ export const changePassword = async (
       new_password: newPassword,
     }),
   });
-  if (!response.ok) throw new Error("Error al cambiar la contraseña");
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error((data as any).error || "Error al cambiar la contraseña");
+  }
   return response.json();
 };

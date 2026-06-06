@@ -147,7 +147,6 @@ class Pedido(models.Model):
         return f"Pedido {self.id} - {self.usuario.usuario}"
 
 
-# Modelo para registrar pagos de Stripe
 class Entrada(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="entradas")
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE, related_name="entradas")
@@ -166,7 +165,7 @@ class Pago(models.Model):
     
     cantidad = models.IntegerField(default=1)
     monto = models.DecimalField(max_digits=8, decimal_places=2)
-    stripe_session_id = models.CharField(max_length=255, blank=True, null=True)
+    stripe_session_id = models.CharField(max_length=255, blank=True, null=True, db_index=True)
     pagado = models.BooleanField(default=False)
     fecha = models.DateTimeField(auto_now_add=True)
 

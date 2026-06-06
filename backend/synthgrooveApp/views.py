@@ -1,5 +1,6 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from django.db import transaction
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -149,8 +150,6 @@ class ChangePasswordAPIView(APIView):
             return Response({"error": "Todos los campos son obligatorios."}, status=400)
         if not request.user.check_password(old_password):
             return Response({"error": "La contraseña actual es incorrecta."}, status=400)
-        if len(new_password) < 6:
-            return Response({"error": "La contraseña debe tener al menos 6 caracteres."}, status=400)
 
         request.user.set_password(new_password)
         request.user.save()
@@ -238,7 +237,12 @@ class PagoStripeAPIView(APIView):
 
         tipo = request.data.get('tipo')
         obj_id = request.data.get('id')
-        cantidad = int(request.data.get('cantidad', 1))
+        try:
+            cantidad = int(request.data.get('cantidad', 1))
+            if cantidad < 1:
+                return Response({'error': 'Cantidad inválida'}, status=400)
+        except (ValueError, TypeError):
+            return Response({'error': 'Cantidad inválida'}, status=400)
 
         if tipo == 'producto':
             obj = Producto.objects.filter(id=obj_id).first()
@@ -315,41 +319,34 @@ def stripe_webhook(request):
     if pago.pagado:
         return HttpResponse(status=200)
 
-    pago.pagado = True
-    pago.save()
+    try:
+        with transaction.atomic():
+            pago.pagado = True
+            pago.save()
 
-    if not pago.usuario:
-        return HttpResponse(status=200)
-
-    precio_unitario = (
-        Decimal(str(pago.monto)) / Decimal(str(pago.cantidad))
-        if pago.cantidad > 0 else Decimal(str(pago.monto))
-    )
-
-    if pago.producto:
-        try:
-            pedido = Pedido.objects.create(
-                usuario=pago.usuario,
-                producto=pago.producto,
-                cantidad=pago.cantidad,
-                precio_unitario=precio_unitario,
-            )
-            logger.info(f"Pedido {pedido.id} creado: {pago.usuario.usuario} - {pago.producto.nombre}")
-        except Exception as e:
-            logger.error(f"Error creando Pedido: {e}", exc_info=True)
-            return HttpResponse(status=500)
-
-    elif pago.evento:
-        try:
-            entrada = Entrada.objects.create(
-                usuario=pago.usuario,
-                evento=pago.evento,
-                cantidad=pago.cantidad,
-                precio_unitario=precio_unitario,
-            )
-            logger.info(f"Entrada {entrada.id} creada: {pago.usuario.usuario} - {pago.evento.nombre}")
-        except Exception as e:
-            logger.error(f"Error creando Entrada: {e}", exc_info=True)
-            return HttpResponse(status=500)
+            if pago.usuario:
+                precio_unitario = (
+                    Decimal(str(pago.monto)) / Decimal(str(pago.cantidad))
+                    if pago.cantidad > 0 else Decimal(str(pago.monto))
+                )
+                if pago.producto:
+                    pedido = Pedido.objects.create(
+                        usuario=pago.usuario,
+                        producto=pago.producto,
+                        cantidad=pago.cantidad,
+                        precio_unitario=precio_unitario,
+                    )
+                    logger.info(f"Pedido {pedido.id} creado: {pago.usuario.usuario} - {pago.producto.nombre}")
+                elif pago.evento:
+                    entrada = Entrada.objects.create(
+                        usuario=pago.usuario,
+                        evento=pago.evento,
+                        cantidad=pago.cantidad,
+                        precio_unitario=precio_unitario,
+                    )
+                    logger.info(f"Entrada {entrada.id} creada: {pago.usuario.usuario} - {pago.evento.nombre}")
+    except Exception as e:
+        logger.error(f"Error procesando webhook: {e}", exc_info=True)
+        return HttpResponse(status=500)
 
     return HttpResponse(status=200)

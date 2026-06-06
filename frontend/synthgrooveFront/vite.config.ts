@@ -4,12 +4,10 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueDevTools from "vite-plugin-vue-devtools";
 
-const apiProxyTarget =
-  process.env.VITE_API_PROXY_TARGET || "http://127.0.0.1:8000";
+const apiProxyTarget = process.env.VITE_API_PROXY_TARGET || "http://localhost:8000";
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueDevTools()],
+  plugins: [vue(), ...(process.env.NODE_ENV !== "production" ? [vueDevTools()] : [])],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -17,14 +15,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/api": {
-        target: process.env.VITE_API_PROXY_TARGET || "http://localhost:8000",
-        changeOrigin: true,
-      },
-      "/media": {
-        target: process.env.VITE_API_PROXY_TARGET || "http://localhost:8000",
-        changeOrigin: true,
-      },
+      "/api": { target: apiProxyTarget, changeOrigin: true },
+      "/media": { target: apiProxyTarget, changeOrigin: true },
     },
   },
 });

@@ -54,7 +54,7 @@ onMounted(async () => {
       <div
         class="artista-card"
         v-for="artista in artistas"
-        :key="artista.nombre"
+        :key="artista.id"
       >
         <img :src="artista.imagen" class="artista-img" />
         <div class="artista-info">
