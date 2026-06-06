@@ -37,6 +37,7 @@ onMounted(async () => {
 
     <div v-if="loading" class="spinner-wrapper">
       <div class="spinner"></div>
+      <p>Cargando podcasts...</p>
     </div>
 
     <div v-else-if="allPodcasts.length === 0" class="empty">
@@ -125,9 +126,17 @@ onMounted(async () => {
 
 .spinner-wrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 300px;
+  gap: 1rem;
+}
+
+.spinner-wrapper p {
+  color: #f7f1e8;
+  font-size: 0.95rem;
+  margin: 0;
 }
 
 .spinner {

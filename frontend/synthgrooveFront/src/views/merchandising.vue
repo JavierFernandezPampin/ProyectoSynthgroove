@@ -48,6 +48,7 @@ async function comprar(producto: Producto) {
 
     <div v-if="loading" class="spinner-wrapper">
       <div class="spinner"></div>
+      <p>Cargando merchandising...</p>
     </div>
     <div v-else class="row g-0">
       <div class="col-md-6" v-for="producto in productos" :key="producto.id">
@@ -208,9 +209,17 @@ async function comprar(producto: Producto) {
 
 .spinner-wrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 300px;
+  gap: 1rem;
+}
+
+.spinner-wrapper p {
+  color: #f7f1e8;
+  font-size: 0.95rem;
+  margin: 0;
 }
 
 .spinner {

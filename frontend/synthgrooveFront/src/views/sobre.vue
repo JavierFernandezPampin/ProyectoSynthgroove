@@ -45,6 +45,7 @@ onMounted(async () => {
     </div>
     <div v-if="loading" class="spinner-wrapper">
       <div class="spinner"></div>
+      <p>Cargando artistas...</p>
     </div>
     <div v-else class="row g-0">
       <h2 class="titulo-artistas">ARTISTAS</h2>
@@ -247,9 +248,17 @@ onMounted(async () => {
 
 .spinner-wrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 300px;
+  gap: 1rem;
+}
+
+.spinner-wrapper p {
+  color: #f7f1e8;
+  font-size: 0.95rem;
+  margin: 0;
 }
 
 .spinner {

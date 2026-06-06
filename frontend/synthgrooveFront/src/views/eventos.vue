@@ -146,6 +146,7 @@ async function reservarEvento(evento: Evento) {
     <!-- Spinner -->
     <div v-if="loading" class="spinner-wrapper">
       <div class="spinner"></div>
+      <p>Cargando eventos...</p>
     </div>
 
     <!-- Sin resultados -->
@@ -500,9 +501,17 @@ async function reservarEvento(evento: Evento) {
 /* Spinner */
 .spinner-wrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 300px;
+  gap: 1rem;
+}
+
+.spinner-wrapper p {
+  color: #f7f1e8;
+  font-size: 0.95rem;
+  margin: 0;
 }
 .spinner {
   width: 36px;
