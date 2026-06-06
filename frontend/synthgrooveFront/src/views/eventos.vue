@@ -444,7 +444,7 @@ async function reservarEvento(evento: Evento) {
   text-transform: uppercase;
   font-size: 0.75rem;
   letter-spacing: 0.12em;
-  border-radius: 0;
+  border-radius: 999px;
   text-decoration: none;
   transition:
     background 0.2s,
@@ -518,7 +518,7 @@ async function reservarEvento(evento: Evento) {
   height: 36px;
   border: 2px solid #333;
   border-top-color: #f7f1e8;
-  border-radius: 0;
+  border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 @keyframes spin {

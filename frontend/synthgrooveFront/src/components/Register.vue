@@ -115,7 +115,7 @@ async function handleRegister() {
   padding: 2rem;
   background: #1a1a1a;
   border: 1px solid #333;
-  border-radius: 0;
+  border-radius: 12px;
 }
 .register-form h2 {
   color: #f7f1e8;

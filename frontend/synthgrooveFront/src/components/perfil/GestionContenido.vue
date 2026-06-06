@@ -368,7 +368,7 @@ onMounted(load);
 .gestion-tabs {
   display: flex;
   border: 1px solid #333;
-  border-radius: 0;
+  border-radius: 6px;
   overflow: hidden;
   width: fit-content;
 }
@@ -409,7 +409,7 @@ onMounted(load);
 .gestion-form {
   background: #111;
   border: 1px solid #333;
-  border-radius: 0;
+  border-radius: 8px;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -441,7 +441,7 @@ onMounted(load);
   color: #f7f1e8;
   padding: 0.6rem 0.8rem;
   font-size: 0.95rem;
-  border-radius: 0;
+  border-radius: 4px;
   font-family: inherit;
 }
 
@@ -456,7 +456,7 @@ onMounted(load);
   width: 80px;
   height: 80px;
   object-fit: cover;
-  border-radius: 0;
+  border-radius: 4px;
   border: 1px solid #333;
 }
 
@@ -471,7 +471,7 @@ onMounted(load);
 .btn-cancel {
   padding: 0.7rem 1.5rem;
   font-size: 0.95rem;
-  border-radius: 0;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
   font-family: inherit;
@@ -509,7 +509,7 @@ onMounted(load);
   display: flex;
   flex-direction: column;
   border: 1px solid #333;
-  border-radius: 0;
+  border-radius: 8px;
   overflow: hidden;
 }
 
@@ -534,7 +534,7 @@ onMounted(load);
   width: 52px;
   height: 52px;
   object-fit: cover;
-  border-radius: 0;
+  border-radius: 4px;
   border: 1px solid #333;
   flex-shrink: 0;
 }
@@ -576,7 +576,7 @@ onMounted(load);
   color: #aaa;
   padding: 0.35rem 0.75rem;
   font-size: 0.8rem;
-  border-radius: 0;
+  border-radius: 4px;
   cursor: pointer;
   font-family: inherit;
   transition: all 0.2s;
@@ -593,7 +593,7 @@ onMounted(load);
   color: #e05252;
   padding: 0.4rem 0.85rem;
   font-size: 0.8rem;
-  border-radius: 0;
+  border-radius: 4px;
   cursor: pointer;
   font-family: inherit;
   transition: all 0.2s;

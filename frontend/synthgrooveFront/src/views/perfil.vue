@@ -366,7 +366,7 @@ onMounted(loadUserData);
   height: 40px;
   border: 2px solid #333;
   border-top: 2px solid #f7f1e8;
-  border-radius: 0;
+  border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 
@@ -390,7 +390,7 @@ onMounted(loadUserData);
 section {
   background: #1a1a1a;
   border: 1px solid #333;
-  border-radius: 0;
+  border-radius: 12px;
   padding: 2rem;
 }
 
@@ -457,7 +457,7 @@ section {
   color: #f7f1e8;
   padding: 0.6rem 0.8rem;
   font-size: 0.95rem;
-  border-radius: 0;
+  border-radius: 4px;
 }
 
 .form-group input:focus {
@@ -476,7 +476,7 @@ section {
 .btn-cancel {
   padding: 0.7rem 1.5rem;
   font-size: 0.95rem;
-  border-radius: 0;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
   font-family: "Space Grotesk", "Avenir Next", "Trebuchet MS", sans-serif;
@@ -553,7 +553,7 @@ section {
 
 .order-card {
   border: 1px solid #333;
-  border-radius: 0;
+  border-radius: 8px;
   overflow: hidden;
   transition: border-color 0.2s;
 }
@@ -625,7 +625,7 @@ section {
 .error-container {
   background: rgba(224, 82, 82, 0.1);
   border: 1px solid #e05252;
-  border-radius: 0;
+  border-radius: 12px;
   padding: 1.5rem;
   text-align: center;
 }
@@ -643,7 +643,7 @@ section {
 .ticket-card {
   display: flex;
   border: 1px solid #333;
-  border-radius: 0;
+  border-radius: 8px;
   overflow: hidden;
   background: #111;
 }

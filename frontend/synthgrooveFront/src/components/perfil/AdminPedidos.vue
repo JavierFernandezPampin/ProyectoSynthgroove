@@ -123,7 +123,7 @@ onMounted(async () => {
 
 .historial-table {
   border: 1px solid #333;
-  border-radius: 0;
+  border-radius: 8px;
   overflow: hidden;
 }
 
