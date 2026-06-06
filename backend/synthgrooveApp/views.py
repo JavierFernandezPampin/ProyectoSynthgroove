@@ -80,6 +80,8 @@ class RegisterAPIView(APIView):
 
         if not mail or not usuario or not password:
             return Response({"error": "Todos los campos son obligatorios."}, status=400)
+        if len(password) <= 6:
+            return Response({"error": "La contraseña debe tener más de 6 caracteres."}, status=400)
         if Usuario.objects.filter(mail=mail).exists():
             return Response({"error": "El email ya está en uso."}, status=400)
         if Usuario.objects.filter(usuario=usuario).exists():

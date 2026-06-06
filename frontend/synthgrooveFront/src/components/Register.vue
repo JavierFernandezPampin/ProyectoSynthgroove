@@ -15,6 +15,11 @@ const error = ref("");
 async function handleRegister() {
   error.value = "";
 
+  if (password.value.length <= 6) {
+    error.value = "La contraseña debe tener más de 6 caracteres";
+    return;
+  }
+
   if (password.value !== confirmPassword.value) {
     error.value = "Las contraseñas no coinciden";
     return;
