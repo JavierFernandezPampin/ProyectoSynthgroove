@@ -8,19 +8,35 @@ El frontend está hecho con Vue 3 y el backend con Django REST Framework. Incluy
 
 ### Con Docker (recomendado)
 
-Desde la raíz del proyecto:
+Clona el repositorio y ejecuta desde su raíz en PowerShell:
 
-```bash
-docker compose up --build
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\deploy.ps1
 ```
 
-Una vez arrancado:
+La directiva `Bypass` solo se aplica a ese proceso de PowerShell; no cambia la
+configuración permanente del equipo.
+
+El script crea `.env` con secretos locales aleatorios si todavía no existe,
+construye las imágenes, inicia MySQL y el resto de servicios, y aplica las
+migraciones automáticamente. Si Docker Desktop no está instalado, intenta
+instalarlo con `winget` y arrancarlo. Puede solicitar permisos de administrador;
+si Windows necesita habilitar WSL 2 o reiniciarse, completa ese paso y vuelve a
+ejecutar el script. No reemplaza un `.env` que ya tengas.
+
+Al terminar:
 
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:8000`
 - phpMyAdmin: `http://localhost:8080`
 
-El backend aplica las migraciones automáticamente al iniciarse.
+Los archivos subidos se guardan en `backend/media` mientras no configures
+credenciales de Cloudinary. Los pagos con Stripe requieren sus claves en `.env`.
+Para detener los servicios, ejecuta `docker compose down`; para borrar también
+la base de datos local, usa `docker compose down -v`.
+
+Este arranque está pensado para desarrollo y uso local, no para exponerlo como
+servicio de producción en Internet.
 
 ### Manual
 
@@ -31,6 +47,11 @@ cd backend
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+export DJANGO_SECRET_KEY='una-clave-segura'
+export DB_NAME='nombre_de_base_de_datos'
+export DB_USER='usuario'
+export DB_PASSWORD='contraseña'
+export DB_HOST='localhost'
 python manage.py migrate
 python manage.py runserver
 ```
@@ -51,6 +72,10 @@ npm run dev
 - Media: Cloudinary
 - Pagos: Stripe
 - Contenerización: Docker y Docker Compose
+
+Las credenciales y claves se configuran mediante variables de entorno. No añadas
+valores reales al repositorio; `.env.example` solo contiene nombres y valores de
+ejemplo.
 
 ## Uso
 
